@@ -1,4 +1,4 @@
-# Watch.js 1.0.13
+# Watch.js 1.0.13 [Download](https://raw.github.com/melanke/Watch.JS/master/src/watch.js)
 
 ##compatibility
 Works with: IE 9+, FF 4+, SF 5+, WebKit, CH 7+, OP 12+, BESEN, Rhino 1.7+
