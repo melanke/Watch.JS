@@ -144,8 +144,12 @@ $watchjs$.defineProp(Object.prototype, "watchOne", function(prop, watcher) {
 
         obj.watchFunctions(prop);
 
-        if (JSON.stringify(oldval) != JSON.stringify(newval) && arguments.callee.caller != watcher) {
-            obj.callWatchers(prop);
+        if (JSON.stringify(oldval) != JSON.stringify(newval)) {
+            if (!$watchjs$.watcherInvocationRunning){
+                $watchjs$.watcherInvocationRunning = true;
+                obj.callWatchers(prop);
+                $watchjs$.watcherInvocationRunning = false;
+            }
         }
     };
 
