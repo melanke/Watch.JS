@@ -72,7 +72,7 @@ ex3.attr3.push("new value");
 
 ## Don't worry about the Inifinite Loop
 
-Different of some libraries, with Watch.JS you will never have to worry about inifinite loop when change the object inside its own watcher, the watcher will not be invoked from itself.
+If you don't want to call a second watcher in the current scope just set WatchJS.noMore to true and it will be reset to false when this watcher finishes.
 
 ```javascript
 //defining our object no matter which way we want
