@@ -72,26 +72,31 @@ ex3.attr3.push("new value");
 
 ## Don't worry about the Inifinite Loop
 
-Different of some libraries, with Watch.JS you will never to worry about inifinite loop when change the object inside its own watcher, the watcher will not be invoked from itself.
+Different of some libraries, with Watch.JS you will never have to worry about inifinite loop when change the object inside its own watcher, the watcher will not be invoked from itself.
 
 ```javascript
 //defining our object no matter which way we want
-var ex4 = {
-	attr1: 0,
-	attr2: 1,
-	attr3: ["a", 3, null]
+var ex1 = {
+    attr1: "inicial value of attr1",
+    attr2: "initial value of attr2"
 };
 
 //defining a 'watcher' for an attribute
-ex4.watch("attr2", function(){
-    alert("attr2 changes");
-	ex4.attr2 = ex4.attr2 * 2; //will not invoke the watcher
+ex1.watch("attr1", function(){
+    WatchJS.noMore = true; //prevent invoking watcher in this scope
+    ex1.attr2 = ex1.attr1 + " + 1";
 });
 
-ex4.attr2 = 2; //attr2 will be changed to 2 and inside the watcher it will be changed to 4
+//defining other 'watcher' for another attribute
+ex1.watch("attr2", function(){
+    alert("attr2 changes");
+});
+
+
+ex1.attr1 = "other value to 1"; //attr1 will be changed but will not invoke the attr2`s watcher
 ```
 
-[Try out](http://jsfiddle.net/JHYeD/2/)
+[Try out](http://jsfiddle.net/z2sJr/6/)
 
 ## Chill out, no surprises, new attributes will not be considered
 
