@@ -7,7 +7,7 @@
  * IE 9+, FF 4+, SF 5+, WebKit, CH 7+, OP 12+, BESEN, Rhino 1.7+
  * 
  * FORK:
- * https://gist.github.com/1627705
+ * https://github.com/melanke/Watch.JS
  */
 
 var WatchJS = {
@@ -158,6 +158,64 @@ WatchJS.defineProp(Object.prototype, "watchOne", function(prop, watcher) {
         WatchJS.defineGetAndSet(obj, prop, getter, setter);
 
 
+});
+
+WatchJS.defineProp(Object.prototype, "unwatch", function() {
+
+    if (arguments.length == 1) 
+        this.unwatchAll.apply(this, arguments);
+    else if (WatchJS.isArray(arguments[0])) 
+        this.unwatchMany.apply(this, arguments);
+    else
+        this.unwatchOne.apply(this, arguments);
+
+});
+
+WatchJS.defineProp(Object.prototype, "unwatchAll", function(watcher) {
+                        
+    var obj = this;
+
+    if (obj instanceof String || (!(obj instanceof Object) && !WatchJS.isArray(obj))) //accepts only objects and array (not string)
+        return;
+
+    var props = [];
+
+
+    if(WatchJS.isArray(obj)){
+        for (var prop=0; prop<obj.length; prop++) { //for each item if obj is an array 
+            props.push(prop); //put in the props
+        }
+    }else{
+        for (var prop2 in obj) { //for each attribute if obj is an object
+            props.push(prop2); //put in the props
+        }
+    }
+
+    obj.unwatchMany(props, watcher); //watch all itens of the props
+});
+
+
+WatchJS.defineProp(Object.prototype, "unwatchMany", function(props, watcher) {
+    var obj = this;
+
+    if(WatchJS.isArray(obj)){
+        for (var prop in props) { //watch each iten of "props" if is an array
+            obj.unwatchOne(props[prop], watcher);
+        }
+    }else{
+        for (var prop2 in props) { //watch each attribute of "props" if is an object
+            obj.unwatchOne(props[prop2], watcher);
+        }
+    }
+});
+
+WatchJS.defineProp(Object.prototype, "unwatchOne", function(prop, watcher) {
+    for(var i in this.watchers[prop]){
+        var w = this.watchers[prop][i];
+
+        if(w == watcher)
+            this.watchers[prop].splice(i, 1);
+    }
 });
 
 WatchJS.defineProp(Object.prototype, "callWatchers", function(prop) {

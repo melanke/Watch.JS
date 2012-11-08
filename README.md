@@ -26,7 +26,7 @@ ex1.watch("attr1", function(){
 ex1.attr1 = "other value";
 ```
 
-[Try out](http://jsfiddle.net/NbJuh/)
+[Try out](http://jsfiddle.net/NbJuh/13/)
 
 ## Observe the changes of more than one object attribute
 
@@ -47,7 +47,7 @@ ex2.watch(["attr2", "attr3"], function(){
 ex2.attr2 = 50;
 ```
 
-[Try out](http://jsfiddle.net/2zT4C/)
+[Try out](http://jsfiddle.net/2zT4C/2/)
 
 ## Observe the changes of all attributes of the object
 
@@ -68,7 +68,33 @@ ex3.watch(function(){
 ex3.attr3.push("new value");
 ```
 
-[Try out](http://jsfiddle.net/C83pW/)
+[Try out](http://jsfiddle.net/C83pW/1/)
+
+## Remove a Watcher
+
+```javascript
+var obj = {
+    phrase: "hey",
+    name: "buddy",
+    alert: function(){
+        alert(obj.phrase + " " + obj.name);
+    },
+    alert2: function(){
+        alert(obj.name + ", " + obj.phrase);
+    }
+}
+    
+obj.watch("name", obj.alert);
+obj.watch("name", obj.alert2);
+
+obj.name = "johnny";
+
+obj.unwatch("name", obj.alert);
+
+obj.name = "phil";​
+```
+
+[Try out](http://jsfiddle.net/SZ2Ut/)
 
 ## Don't worry about the Inifinite Loop
 
@@ -96,7 +122,7 @@ ex1.watch("attr2", function(){
 ex1.attr1 = "other value to 1"; //attr1 will be changed but will not invoke the attr2`s watcher
 ```
 
-[Try out](http://jsfiddle.net/z2sJr/6/)
+[Try out](http://jsfiddle.net/z2sJr/8/)
 
 ## Chill out, no surprises, new attributes will not be considered
 
@@ -118,7 +144,7 @@ ex6.attr3 = null; //no watcher will be invoked
 ex6.attr3 = "value"; //no watcher will be invoked
 ```
 
-[Try out](http://jsfiddle.net/NFmUc/)
+[Try out](http://jsfiddle.net/NFmUc/1/)
 
 ## Invoke the watcher anytime you want
 
@@ -134,10 +160,10 @@ ex7.watch(function(){
 	alert("some attribute of ex6 changes!")
 });
 
-ex7.callWatchers(); //invoke the watcher
+ex7.callWatchers("attr1"); //invoke the watcher
 ```
 
-[Try out](http://jsfiddle.net/98MmB/)
+[Try out](http://jsfiddle.net/98MmB/4/)
 
 ## Compatible with JQuery
 
@@ -155,4 +181,4 @@ $(function(){
     });
 });
 ```
-[Try out](http://jsfiddle.net/fj2Yb/)
+[Try out](http://jsfiddle.net/fj2Yb/5/)
