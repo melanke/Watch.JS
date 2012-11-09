@@ -149,7 +149,7 @@ WatchJS.defineProp(Object.prototype, "watchOne", function(prop, watcher) {
 
         if (JSON.stringify(oldval) != JSON.stringify(newval)) {
             if (!WatchJS.noMore){
-                obj.callWatchers(prop);
+                obj.callWatchers(prop,newval,oldval);
                 WatchJS.noMore = false;
             }
         }
@@ -218,12 +218,12 @@ WatchJS.defineProp(Object.prototype, "unwatchOne", function(prop, watcher) {
     }
 });
 
-WatchJS.defineProp(Object.prototype, "callWatchers", function(prop) {
+WatchJS.defineProp(Object.prototype, "callWatchers", function(prop,newval,oldval) {
     var obj = this;
 
     for (var wr in obj.watchers[prop]) {
         if (WatchJS.isInt(wr)){
-            obj.watchers[prop][wr]();
+            obj.watchers[prop][wr](prop,newval,oldval);
         }
     }
 });
