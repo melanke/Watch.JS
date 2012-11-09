@@ -96,6 +96,26 @@ obj.name = "phil";​
 
 [Try out](http://jsfiddle.net/SZ2Ut/)
 
+## More information about the change
+
+```javascript
+//defining our object no matter which way we want
+var ex1 = {
+    attr1: "initial value of attr1",
+    attr2: "initial value of attr2"
+};
+
+//defining a 'watcher' for an attribute
+ex1.watch("attr1", function(prop, newvalue, oldvalue){
+    alert(prop+" - new: "+newvalue+", old: "+oldvalue);
+});
+
+//when changing the attribute its watcher will be invoked
+ex1.attr1 = "other value";​
+```
+
+[Try out](http://jsfiddle.net/XnbXS/1/)
+
 ## Don't worry about the Inifinite Loop
 
 If you don't want to call a second watcher in the current scope just set WatchJS.noMore to true and it will be reset to false when this watcher finishes.
