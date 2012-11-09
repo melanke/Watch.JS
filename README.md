@@ -182,3 +182,72 @@ $(function(){
 });
 ```
 [Try out](http://jsfiddle.net/fj2Yb/5/)
+
+## Different ways to build Classes/Objects and use Watch.JS
+
+```javascript
+//open the browser log to view the messages
+
+var Apple = function(type) {
+    var _thisApple = this;
+    this.type = type;
+    this.color = "red";
+
+    this.getInfo = function() {
+        return this.color + ' ' + this.type + ' apple';
+    };
+
+    this.watch(function(){
+        console.log("although we are using Watch.js the apple structure remains the same");
+        for(var i in _thisApple){
+            console.log(i+": "+_thisApple[i]);
+        }
+    });
+};
+
+
+var apple = new Apple("macintosh");
+apple.type = "other";
+
+
+var Banana = function(type) {
+    var _thisBanana = this;
+    this.type = type;
+    this.color = "yellow";
+
+    this.watch(function(){
+        console.log("although we are using Watch.js the banana structure remains the same");
+        for(var i in _thisBanana){
+            console.log(i+": "+_thisBanana[i]);
+        }
+    });
+};
+
+Banana.prototype.getInfo = function() {
+    return this.color + ' ' + this.type + ' banana';
+};
+
+var banana = new Banana("Cavendish");
+banana.type = "other";
+
+var orange = {
+    type: "pocan",
+    color: "orange",
+    getInfo: function () {
+        return this.color + ' ' + this.type + ' apple';
+    }
+};
+
+orange.watch(function(){
+    console.log("although we are using Watch.js the orange structure remains the same");
+
+    for(var i in orange){
+        console.log(i+": "+orange[i]);
+    }
+});
+
+orange.type = "other";
+​
+//try other ways to build objects ;)
+```
+[Try out](http://jsfiddle.net/t94Vv/)
