@@ -9,8 +9,8 @@
  * FORK:
  * https://github.com/melanke/Watch.JS
  */
-
-(function (root, factory) {
+"use strict";
+(function (factory) {
     if (typeof exports === 'object') {
         // Node. Does not work with strict CommonJS, but
         // only CommonJS-like enviroments that support module.exports,
@@ -20,23 +20,20 @@
         // AMD. Register as an anonymous module.
         define(factory);
     } else {
-        // Browser globals (root is window)
-        root.WatchJS = factory();
+        // Browser globals
+        window.WatchJS = factory();
     }
-}(this, function () {
+}(function () {
     var WatchJS = {
 
         noMore: false,
 
         isFunction: function(functionToCheck) {
             var getType = {};
-            return functionToCheck && getType.toString.call(functionToCheck) == '[object Function]';
+            return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';
         },
-
         isInt: function(x) {
-            var y = parseInt(x);
-            if (isNaN(y)) return false;
-            return x == y && x.toString() == y.toString();
+            return x % 1 === 0;
         },
         isArray: function(obj) {
             return Object.prototype.toString.call(obj) === '[object Array]';
@@ -54,17 +51,17 @@
                     Object.prototype.__defineGetter__.call(obj, propName, getter);
                     Object.prototype.__defineSetter__.call(obj, propName, setter);
                 }catch(error2){
-                    throw "watchJS error: browser not supported :/"
+                    throw "watchJS error: browser not supported :/";
                 }
             }
         },
         defineProp: function(obj, propName, value){
             try{
                 Object.defineProperty(obj, propName, {
-                    enumerable: false
-                    , configurable: true
-                    , writable: false
-                    , value: value
+                    enumerable: false,
+                    configurable: true,
+                    writable: false,
+                    value: value
                 });
             }catch(error){
                 obj[propName] = value;
@@ -74,12 +71,13 @@
 
     WatchJS.defineProp(Object.prototype, "watch", function() {
 
-        if (arguments.length == 1)
+        if (arguments.length === 1) {
             this.watchAll.apply(this, arguments);
-        else if (WatchJS.isArray(arguments[0]))
+        } else if (WatchJS.isArray(arguments[0])) {
             this.watchMany.apply(this, arguments);
-        else
+        } else {
             this.watchOne.apply(this, arguments);
+        }
 
     });
 
@@ -88,8 +86,9 @@
 
         var obj = this;
 
-        if (obj instanceof String || (!(obj instanceof Object) && !WatchJS.isArray(obj))) //accepts only objects and array (not string)
+        if (obj instanceof String || (!(obj instanceof Object) && !WatchJS.isArray(obj))) { //accepts only objects and array (not string)
             return;
+        }
 
         var props = [];
 
@@ -127,11 +126,13 @@
 
         var val = obj[prop];
 
-        if(obj[prop]===undefined || WatchJS.isFunction(obj[prop])) //dont watch if it is null or a function
+        if(obj[prop]===undefined || WatchJS.isFunction(obj[prop])) { //dont watch if it is null or a function
             return;
+        }
 
-        if(obj[prop]!=null)
+        if(obj[prop]!=null) {
             obj[prop].watchAll(watcher); //recursively watch all attributes of this
+        }
 
         obj.watchFunctions(prop);
 
@@ -140,8 +141,9 @@
             WatchJS.defineProp(obj, "watchers", {});
         }
 
-        if (!obj.watchers[prop])
+        if (!obj.watchers[prop]) {
             obj.watchers[prop] = [];
+        }
 
 
         obj.watchers[prop].push(watcher); //add the new watcher in the watchers array
@@ -156,12 +158,13 @@
             var oldval = val;
             val = newval;
 
-            if(obj[prop])
+            if(obj[prop]) {
                 obj[prop].watchAll(watcher);
+            }
 
             obj.watchFunctions(prop);
 
-            if (JSON.stringify(oldval) != JSON.stringify(newval)) {
+            if (JSON.stringify(oldval) !== JSON.stringify(newval)) {
                 if (!WatchJS.noMore){
                     obj.callWatchers(prop,newval,oldval);
                     WatchJS.noMore = false;
@@ -176,12 +179,13 @@
 
     WatchJS.defineProp(Object.prototype, "unwatch", function() {
 
-        if (arguments.length == 1)
+        if (arguments.length === 1) {
             this.unwatchAll.apply(this, arguments);
-        else if (WatchJS.isArray(arguments[0]))
+        } else if (WatchJS.isArray(arguments[0])) {
             this.unwatchMany.apply(this, arguments);
-        else
+        } else {
             this.unwatchOne.apply(this, arguments);
+        }
 
     });
 
@@ -189,8 +193,9 @@
 
         var obj = this;
 
-        if (obj instanceof String || (!(obj instanceof Object) && !WatchJS.isArray(obj))) //accepts only objects and array (not string)
+        if (obj instanceof String || (!(obj instanceof Object) && !WatchJS.isArray(obj))) { //accepts only objects and array (not string)
             return;
+        }
 
         var props = [];
 
@@ -227,8 +232,9 @@
         for(var i in this.watchers[prop]){
             var w = this.watchers[prop][i];
 
-            if(w == watcher)
+            if(w === watcher) {
                 this.watchers[prop].splice(i, 1);
+            }
         }
     });
 
@@ -247,8 +253,9 @@
     WatchJS.defineProp(Object.prototype, "watchFunctions", function(prop) {
         var obj = this;
 
-        if((!obj[prop]) || (obj[prop] instanceof String) || (!WatchJS.isArray(obj[prop])))
+        if((!obj[prop]) || (obj[prop] instanceof String) || (!WatchJS.isArray(obj[prop]))) {
             return;
+        }
 
         var originalpop = obj[prop].pop;
         WatchJS.defineProp(obj[prop], "pop", function() {
