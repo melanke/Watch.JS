@@ -250,7 +250,7 @@
             }
             return response;
         });
-    }
+    };
 
     WatchJS.defineProp(Object.prototype, "watchFunctions", function (prop) {
         var obj = this;
