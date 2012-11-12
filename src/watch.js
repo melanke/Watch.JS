@@ -26,50 +26,50 @@
 }(function () {
     var WatchJS = {
 
-        noMore: false,
+        noMore:false,
 
-        isFunction: function(functionToCheck) {
+        isFunction:function (functionToCheck) {
             var getType = {};
             return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';
         },
-        isInt: function(x) {
+        isInt:function (x) {
             return x % 1 === 0;
         },
-        isArray: function(obj) {
+        isArray:function (obj) {
             return Object.prototype.toString.call(obj) === '[object Array]';
         },
-        defineGetAndSet: function(obj, propName, getter, setter){
-            try{
+        defineGetAndSet:function (obj, propName, getter, setter) {
+            try {
                 Object.defineProperty(obj, propName, {
-                    get: getter,
-                    set: setter,
-                    enumerable: true,
-                    configurable: true
+                    get:getter,
+                    set:setter,
+                    enumerable:true,
+                    configurable:true
                 });
-            }catch(error){
-                try{
+            } catch (error) {
+                try {
                     Object.prototype.__defineGetter__.call(obj, propName, getter);
                     Object.prototype.__defineSetter__.call(obj, propName, setter);
-                }catch(error2){
+                } catch (error2) {
                     throw "watchJS error: browser not supported :/";
                 }
             }
         },
-        defineProp: function(obj, propName, value){
-            try{
+        defineProp:function (obj, propName, value) {
+            try {
                 Object.defineProperty(obj, propName, {
-                    enumerable: false,
-                    configurable: true,
-                    writable: false,
-                    value: value
+                    enumerable:false,
+                    configurable:true,
+                    writable:false,
+                    value:value
                 });
-            }catch(error){
+            } catch (error) {
                 obj[propName] = value;
             }
         }
     };
 
-    WatchJS.defineProp(Object.prototype, "watch", function() {
+    WatchJS.defineProp(Object.prototype, "watch", function () {
 
         if (arguments.length === 1) {
             this.watchAll.apply(this, arguments);
@@ -82,7 +82,7 @@
     });
 
 
-    WatchJS.defineProp(Object.prototype, "watchAll", function(watcher) {
+    WatchJS.defineProp(Object.prototype, "watchAll", function (watcher) {
 
         var obj = this;
 
@@ -93,11 +93,11 @@
         var props = [];
 
 
-        if(WatchJS.isArray(obj)){
-            for (var prop=0; prop<obj.length; prop++) { //for each item if obj is an array
+        if (WatchJS.isArray(obj)) {
+            for (var prop = 0; prop < obj.length; prop++) { //for each item if obj is an array
                 props.push(prop); //put in the props
             }
-        }else{
+        } else {
             for (var prop2 in obj) { //for each attribute if obj is an object
                 props.push(prop2); //put in the props
             }
@@ -107,30 +107,30 @@
     });
 
 
-    WatchJS.defineProp(Object.prototype, "watchMany", function(props, watcher) {
+    WatchJS.defineProp(Object.prototype, "watchMany", function (props, watcher) {
         var obj = this;
 
-        if(WatchJS.isArray(obj)){
+        if (WatchJS.isArray(obj)) {
             for (var prop in props) { //watch each iten of "props" if is an array
                 obj.watchOne(props[prop], watcher);
             }
-        }else{
+        } else {
             for (var prop2 in props) { //watch each attribute of "props" if is an object
                 obj.watchOne(props[prop2], watcher);
             }
         }
     });
 
-    WatchJS.defineProp(Object.prototype, "watchOne", function(prop, watcher) {
+    WatchJS.defineProp(Object.prototype, "watchOne", function (prop, watcher) {
         var obj = this;
 
         var val = obj[prop];
 
-        if(obj[prop]===undefined || WatchJS.isFunction(obj[prop])) { //dont watch if it is null or a function
+        if (obj[prop] === undefined || WatchJS.isFunction(obj[prop])) { //dont watch if it is null or a function
             return;
         }
 
-        if(obj[prop]!=null) {
+        if (obj[prop] != null) {
             obj[prop].watchAll(watcher); //recursively watch all attributes of this
         }
 
@@ -149,24 +149,24 @@
         obj.watchers[prop].push(watcher); //add the new watcher in the watchers array
 
 
-        var getter = function() {
+        var getter = function () {
             return val;
         };
 
 
-        var setter = function(newval) {
+        var setter = function (newval) {
             var oldval = val;
             val = newval;
 
-            if(obj[prop]) {
+            if (obj[prop]) {
                 obj[prop].watchAll(watcher);
             }
 
             obj.watchFunctions(prop);
 
             if (JSON.stringify(oldval) !== JSON.stringify(newval)) {
-                if (!WatchJS.noMore){
-                    obj.callWatchers(prop,newval,oldval);
+                if (!WatchJS.noMore) {
+                    obj.callWatchers(prop, newval, oldval);
                     WatchJS.noMore = false;
                 }
             }
@@ -177,7 +177,7 @@
 
     });
 
-    WatchJS.defineProp(Object.prototype, "unwatch", function() {
+    WatchJS.defineProp(Object.prototype, "unwatch", function () {
 
         if (arguments.length === 1) {
             this.unwatchAll.apply(this, arguments);
@@ -189,7 +189,7 @@
 
     });
 
-    WatchJS.defineProp(Object.prototype, "unwatchAll", function(watcher) {
+    WatchJS.defineProp(Object.prototype, "unwatchAll", function (watcher) {
 
         var obj = this;
 
@@ -200,11 +200,11 @@
         var props = [];
 
 
-        if(WatchJS.isArray(obj)){
-            for (var prop=0; prop<obj.length; prop++) { //for each item if obj is an array
+        if (WatchJS.isArray(obj)) {
+            for (var prop = 0; prop < obj.length; prop++) { //for each item if obj is an array
                 props.push(prop); //put in the props
             }
-        }else{
+        } else {
             for (var prop2 in obj) { //for each attribute if obj is an object
                 props.push(prop2); //put in the props
             }
@@ -214,51 +214,50 @@
     });
 
 
-    WatchJS.defineProp(Object.prototype, "unwatchMany", function(props, watcher) {
+    WatchJS.defineProp(Object.prototype, "unwatchMany", function (props, watcher) {
         var obj = this;
 
-        if(WatchJS.isArray(obj)){
+        if (WatchJS.isArray(obj)) {
             for (var prop in props) { //watch each iten of "props" if is an array
                 obj.unwatchOne(props[prop], watcher);
             }
-        }else{
+        } else {
             for (var prop2 in props) { //watch each attribute of "props" if is an object
                 obj.unwatchOne(props[prop2], watcher);
             }
         }
     });
 
-    WatchJS.defineProp(Object.prototype, "unwatchOne", function(prop, watcher) {
-        for(var i in this.watchers[prop]){
+    WatchJS.defineProp(Object.prototype, "unwatchOne", function (prop, watcher) {
+        for (var i in this.watchers[prop]) {
             var w = this.watchers[prop][i];
 
-            if(w === watcher) {
+            if (w === watcher) {
                 this.watchers[prop].splice(i, 1);
             }
         }
     });
 
-    WatchJS.defineProp(Object.prototype, "callWatchers", function(prop,newval,oldval) {
+    WatchJS.defineProp(Object.prototype, "callWatchers", function (prop, newval, oldval) {
         var obj = this;
 
         for (var wr in obj.watchers[prop]) {
-            if (WatchJS.isInt(wr)){
-                obj.watchers[prop][wr](prop,newval,oldval);
+            if (WatchJS.isInt(wr)) {
+                obj.watchers[prop][wr](prop, newval, oldval);
             }
         }
     });
 
 
-
-    WatchJS.defineProp(Object.prototype, "watchFunctions", function(prop) {
+    WatchJS.defineProp(Object.prototype, "watchFunctions", function (prop) {
         var obj = this;
 
-        if((!obj[prop]) || (obj[prop] instanceof String) || (!WatchJS.isArray(obj[prop]))) {
+        if ((!obj[prop]) || (obj[prop] instanceof String) || (!WatchJS.isArray(obj[prop]))) {
             return;
         }
 
         var originalpop = obj[prop].pop;
-        WatchJS.defineProp(obj[prop], "pop", function() {
+        WatchJS.defineProp(obj[prop], "pop", function () {
             var response = originalpop.apply(this, arguments);
 
             obj.watchOne(obj[prop]);
@@ -269,7 +268,7 @@
 
 
         var originalpush = obj[prop].push;
-        WatchJS.defineProp(obj[prop], "push",  function() {
+        WatchJS.defineProp(obj[prop], "push", function () {
             var response = originalpush.apply(this, arguments);
 
             obj.watchOne(obj[prop]);
@@ -280,7 +279,7 @@
 
 
         var originalreverse = obj[prop].reverse;
-        WatchJS.defineProp(obj[prop], "reverse", function() {
+        WatchJS.defineProp(obj[prop], "reverse", function () {
             var response = originalreverse.apply(this, arguments);
 
             obj.watchOne(obj[prop]);
@@ -291,7 +290,7 @@
 
 
         var originalshift = obj[prop].shift;
-        WatchJS.defineProp(obj[prop], "shift", function() {
+        WatchJS.defineProp(obj[prop], "shift", function () {
             var response = originalshift.apply(this, arguments);
 
             obj.watchOne(obj[prop]);
@@ -302,7 +301,7 @@
 
 
         var originalsort = obj[prop].sort;
-        WatchJS.defineProp(obj[prop], "sort",  function() {
+        WatchJS.defineProp(obj[prop], "sort", function () {
             var response = originalsort.apply(this, arguments);
 
             obj.watchOne(obj[prop]);
@@ -313,7 +312,7 @@
 
 
         var originalslice = obj[prop].slice;
-        WatchJS.defineProp(obj[prop], "slice",  function() {
+        WatchJS.defineProp(obj[prop], "slice", function () {
             var response = originalslice.apply(this, arguments);
 
             obj.watchOne(obj[prop]);
@@ -323,7 +322,7 @@
 
 
         var originalunshift = obj[prop].unshift;
-        WatchJS.defineProp(obj[prop], "unshift", function() {
+        WatchJS.defineProp(obj[prop], "unshift", function () {
             var response = originalunshift.apply(this, arguments);
 
             obj.watchOne(obj[prop]);
