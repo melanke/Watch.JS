@@ -92,7 +92,6 @@
 
         var props = [];
 
-
         if (WatchJS.isArray(obj)) {
             for (var prop = 0; prop < obj.length; prop++) { //for each item if obj is an array
                 props.push(prop); //put in the props
@@ -105,7 +104,6 @@
 
         obj.watchMany(props, watcher); //watch all itens of the props
     });
-
 
     WatchJS.defineProp(Object.prototype, "watchMany", function (props, watcher) {
         var obj = this;
@@ -136,7 +134,6 @@
 
         obj.watchFunctions(prop);
 
-
         if (!obj.watchers) {
             WatchJS.defineProp(obj, "watchers", {});
         }
@@ -145,14 +142,11 @@
             obj.watchers[prop] = [];
         }
 
-
         obj.watchers[prop].push(watcher); //add the new watcher in the watchers array
-
 
         var getter = function () {
             return val;
         };
-
 
         var setter = function (newval) {
             var oldval = val;
@@ -173,8 +167,6 @@
         };
 
         WatchJS.defineGetAndSet(obj, prop, getter, setter);
-
-
     });
 
     WatchJS.defineProp(Object.prototype, "unwatch", function () {
@@ -198,7 +190,6 @@
         }
 
         var props = [];
-
 
         if (WatchJS.isArray(obj)) {
             for (var prop = 0; prop < obj.length; prop++) { //for each item if obj is an array
@@ -248,6 +239,18 @@
         }
     });
 
+    // @todo code related to "watchFunctions" is certainly buggy
+    var methodNames = ['pop', 'push', 'reverse', 'shift', 'sort', 'slice', 'unshift'];
+    var defineArrayMethodWatcher = function(obj, prop, original, methodName) {
+        WatchJS.defineProp(obj[prop], methodName, function () {
+            var response = original.apply(this, arguments);
+            obj.watchOne(obj[prop]);
+            if (methodName !== 'slice') {
+                obj.callWatchers(prop);
+            }
+            return response;
+        });
+    }
 
     WatchJS.defineProp(Object.prototype, "watchFunctions", function (prop) {
         var obj = this;
@@ -256,80 +259,10 @@
             return;
         }
 
-        var originalpop = obj[prop].pop;
-        WatchJS.defineProp(obj[prop], "pop", function () {
-            var response = originalpop.apply(this, arguments);
-
-            obj.watchOne(obj[prop]);
-            obj.callWatchers(prop);
-
-            return response;
-        });
-
-
-        var originalpush = obj[prop].push;
-        WatchJS.defineProp(obj[prop], "push", function () {
-            var response = originalpush.apply(this, arguments);
-
-            obj.watchOne(obj[prop]);
-            obj.callWatchers(prop);
-
-            return response;
-        });
-
-
-        var originalreverse = obj[prop].reverse;
-        WatchJS.defineProp(obj[prop], "reverse", function () {
-            var response = originalreverse.apply(this, arguments);
-
-            obj.watchOne(obj[prop]);
-            obj.callWatchers(prop);
-
-            return response;
-        });
-
-
-        var originalshift = obj[prop].shift;
-        WatchJS.defineProp(obj[prop], "shift", function () {
-            var response = originalshift.apply(this, arguments);
-
-            obj.watchOne(obj[prop]);
-            obj.callWatchers(prop);
-
-            return response;
-        });
-
-
-        var originalsort = obj[prop].sort;
-        WatchJS.defineProp(obj[prop], "sort", function () {
-            var response = originalsort.apply(this, arguments);
-
-            obj.watchOne(obj[prop]);
-            obj.callWatchers(prop);
-
-            return response;
-        });
-
-
-        var originalslice = obj[prop].slice;
-        WatchJS.defineProp(obj[prop], "slice", function () {
-            var response = originalslice.apply(this, arguments);
-
-            obj.watchOne(obj[prop]);
-
-            return response;
-        });
-
-
-        var originalunshift = obj[prop].unshift;
-        WatchJS.defineProp(obj[prop], "unshift", function () {
-            var response = originalunshift.apply(this, arguments);
-
-            obj.watchOne(obj[prop]);
-            obj.callWatchers(prop);
-
-            return response;
-        });
+        for (var i = methodNames.length, methodName; i--;) {
+            methodName = methodNames[i];
+            defineArrayMethodWatcher(obj, prop, obj[prop][methodName], methodName);
+        }
 
     });
 
