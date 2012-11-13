@@ -2,7 +2,11 @@
 
 ##compatibility
 Works with: IE 9+, FF 4+, SF 5+, WebKit, CH 7+, OP 12+, BESEN, Rhino 1.7+
+<<<<<<< HEAD
 If you want a similar API that works for all browsers, try [MultiGetSet](https://gist.github.com/2956493)
+=======
+In the next update it will work for all browsers ;)
+>>>>>>> fix issue #12 - no more modifying Object.prototyp
 
 ## About
 
@@ -18,7 +22,11 @@ var ex1 = {
 };
 
 //defining a 'watcher' for an attribute
+<<<<<<< HEAD
 ex1.watch("attr1", function(){
+=======
+watch(ex1, "attr1", function(){
+>>>>>>> fix issue #12 - no more modifying Object.prototyp
 	alert("attr1 changed!");
 });
 
@@ -26,49 +34,59 @@ ex1.watch("attr1", function(){
 ex1.attr1 = "other value";
 ```
 
-[Try out](http://jsfiddle.net/NbJuh/13/)
+[Try out](http://jsfiddle.net/NbJuh/17/)
 
 ## Observe the changes of more than one object attribute
 
 ```javascript
 //defining our object however we like
 var ex2 = {
-	attr1: 0,
-	attr2: 0,
-	attr3: 0
+    attr1: 0,
+    attr2: 0,
+    attr3: 0
 };
 
 //defining a 'watcher' for the attributes
+<<<<<<< HEAD
 ex2.watch(["attr2", "attr3"], function(){
 	alert("attr2 or attr3 changed!");
+=======
+watch(ex2, ["attr2", "attr3"], function(){
+    alert("attr2 or attr3 changes!");
+>>>>>>> fix issue #12 - no more modifying Object.prototyp
 });
 
 //when changing one of the attributes its watcher will be invoked
-ex2.attr2 = 50;
+ex2.attr2 = 50;​
 ```
 
-[Try out](http://jsfiddle.net/2zT4C/2/)
+[Try out](http://jsfiddle.net/2zT4C/6/)
 
 ## Observe the changes of all attributes of the object
 
 ```javascript
-//defining our object no matter which way we want
+//defining our object however we like
 var ex3 = {
-	attr1: 0,
-	attr2: "initial value of attr2",
-	attr3: ["a", 3, null]
+    attr1: 0,
+    attr2: "initial value of attr2",
+    attr3: ["a", 3, null]
 };
 
 //defining a 'watcher' for the object
+<<<<<<< HEAD
 ex3.watch(function(){
 	alert("some attribute of ex3 changed!");
+=======
+watch(ex3, function(){
+    alert("some attribute of ex3 changes!");
+>>>>>>> fix issue #12 - no more modifying Object.prototyp
 });
 
 //when changing one of the attributes of the object the watcher will be invoked
-ex3.attr3.push("new value");
+ex3.attr3.push("new value");​
 ```
 
-[Try out](http://jsfiddle.net/C83pW/1/)
+[Try out](http://jsfiddle.net/C83pW/3/)
 
 ## Remove a Watcher
 
@@ -83,18 +101,24 @@ var obj = {
         alert(obj.name + ", " + obj.phrase);
     }
 }
+<<<<<<< HEAD
 
 obj.watch("name", obj.alert);
 obj.watch("name", obj.alert2);
+=======
+    
+watch(obj, "name", obj.alert);
+watch(obj, "name", obj.alert2);
+>>>>>>> fix issue #12 - no more modifying Object.prototyp
 
 obj.name = "johnny";
 
-obj.unwatch("name", obj.alert);
+unwatch(obj, "name", obj.alert);
 
 obj.name = "phil";​
 ```
 
-[Try out](http://jsfiddle.net/SZ2Ut/)
+[Try out](http://jsfiddle.net/SZ2Ut/3/)
 
 ## More information about the change
 
@@ -106,7 +130,7 @@ var ex1 = {
 };
 
 //defining a 'watcher' for an attribute
-ex1.watch("attr1", function(prop, newvalue, oldvalue){
+watch(ex1, "attr1", function(prop, newvalue, oldvalue){
     alert(prop+" - new: "+newvalue+", old: "+oldvalue);
 });
 
@@ -114,7 +138,7 @@ ex1.watch("attr1", function(prop, newvalue, oldvalue){
 ex1.attr1 = "other value";​
 ```
 
-[Try out](http://jsfiddle.net/XnbXS/1/)
+[Try out](http://jsfiddle.net/XnbXS/3/)
 
 ## Don't worry about the Infinite Loop
 
@@ -128,21 +152,26 @@ var ex1 = {
 };
 
 //defining a 'watcher' for an attribute
-ex1.watch("attr1", function(){
+watch(ex1, "attr1", function(){
     WatchJS.noMore = true; //prevent invoking watcher in this scope
     ex1.attr2 = ex1.attr1 + " + 1";
 });
 
 //defining other 'watcher' for another attribute
+<<<<<<< HEAD
 ex1.watch("attr2", function(){
     alert("attr2 changed");
+=======
+watch(ex1, "attr2", function(){
+    alert("attr2 changes");
+>>>>>>> fix issue #12 - no more modifying Object.prototyp
 });
 
 
 ex1.attr1 = "other value to 1"; //attr1 will be changed but will not invoke the attr2`s watcher
 ```
 
-[Try out](http://jsfiddle.net/z2sJr/8/)
+[Try out](http://jsfiddle.net/z2sJr/9/)
 
 ## Chill out, no surprises, new attributes will not be considered
 
@@ -151,39 +180,49 @@ After declaring a watcher for some object, when you add new attributes to this o
 ```javascript
 //defining our object however we like
 var ex6 = {
-	attr1: 0,
-	attr2: 1
+    attr1: 0,
+    attr2: 1
 };
 
 //defining a 'watcher' for the object
+<<<<<<< HEAD
 ex6.watch(function(){
 	alert("some attribute of ex6 changed!")
+=======
+watch(ex6, function(){
+    alert("some attribute of ex6 changes!")
+>>>>>>> fix issue #12 - no more modifying Object.prototyp
 });
 
 ex6.attr3 = null; //no watcher will be invoked
-ex6.attr3 = "value"; //no watcher will be invoked
+ex6.attr3 = "value"; //no watcher will be invoked​​​
 ```
 
-[Try out](http://jsfiddle.net/NFmUc/1/)
+[Try out](http://jsfiddle.net/NFmUc/3/)
 
 ## Invoke the watcher anytime you want
 
 ```javascript
 //defining our object however we like
 var ex7 = {
-	attr1: 0,
-	attr2: 1
+    attr1: 0,
+    attr2: 1
 };
 
 //defining a 'watcher' for the object
+<<<<<<< HEAD
 ex7.watch(function(){
 	alert("some attribute of ex6 changed!")
+=======
+watch(ex7, function(){
+    alert("some attribute of ex6 changes!")
+>>>>>>> fix issue #12 - no more modifying Object.prototyp
 });
 
-ex7.callWatchers("attr1"); //invoke the watcher
+callWatchers(ex7, "attr1"); //invoke the watcher​​
 ```
 
-[Try out](http://jsfiddle.net/98MmB/4/)
+[Try out](http://jsfiddle.net/98MmB/6/)
 
 ## Compatible with JQuery
 
@@ -191,8 +230,13 @@ ex7.callWatchers("attr1"); //invoke the watcher
 $(function(){
 
     var obj = {cont: 0};
+<<<<<<< HEAD
 
     obj.watch("cont", function(){
+=======
+    
+    watch(obj, "cont", function(){
+>>>>>>> fix issue #12 - no more modifying Object.prototyp
         alert("obj.cont = "+obj.cont);
     });
 
@@ -201,7 +245,7 @@ $(function(){
     });
 });
 ```
-[Try out](http://jsfiddle.net/fj2Yb/5/)
+[Try out](http://jsfiddle.net/fj2Yb/6/)
 
 ## Different ways to build Classes/Objects and use Watch.JS
 
@@ -217,7 +261,7 @@ var Apple = function(type) {
         return this.color + ' ' + this.type + ' apple';
     };
 
-    this.watch(function(){
+    watch(this, function(){
         console.log("although we are using Watch.js the apple structure remains the same");
         for(var i in _thisApple){
             console.log(i+": "+_thisApple[i]);
@@ -235,7 +279,7 @@ var Banana = function(type) {
     this.type = type;
     this.color = "yellow";
 
-    this.watch(function(){
+    watch(this, function(){
         console.log("although we are using Watch.js the banana structure remains the same");
         for(var i in _thisBanana){
             console.log(i+": "+_thisBanana[i]);
@@ -258,7 +302,7 @@ var orange = {
     }
 };
 
-orange.watch(function(){
+watch(orange, function(){
     console.log("although we are using Watch.js the orange structure remains the same");
 
     for(var i in orange){
@@ -267,7 +311,9 @@ orange.watch(function(){
 });
 
 orange.type = "other";
-​
-//try other ways to build objects ;)
 ```
+<<<<<<< HEAD
 [Try out](http://jsfiddle.net/t94Vv/)
+=======
+[Try out](http://jsfiddle.net/t94Vv/30/)
+>>>>>>> fix issue #12 - no more modifying Object.prototyp
