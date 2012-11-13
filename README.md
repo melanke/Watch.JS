@@ -101,7 +101,7 @@ obj.name = "phil";​
 ## More information about the change
 
 ```javascript
-//defining our object however we like
+//defining our object no matter which way we want
 var ex1 = {
     attr1: "initial value of attr1",
     attr2: "initial value of attr2"
@@ -109,14 +109,14 @@ var ex1 = {
 
 //defining a 'watcher' for an attribute
 watch(ex1, "attr1", function(prop, newvalue, oldvalue){
-    alert(prop+" - new: "+newvalue+", old: "+oldvalue);
+    alert(prop+" - new: "+newvalue+", old: "+oldvalue+"... and the context: "+JSON.stringify(this));
 });
 
 //when changing the attribute its watcher will be invoked
 ex1.attr1 = "other value";​
 ```
 
-[Try out](http://jsfiddle.net/XnbXS/3/)
+[Try out](http://jsfiddle.net/XnbXS/6/)
 
 ## Don't worry about the Infinite Loop
 

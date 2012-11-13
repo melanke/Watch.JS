@@ -237,7 +237,7 @@
 
         for (var wr in obj.watchers[prop]) {
             if (WatchJS.isInt(wr)){
-                obj.watchers[prop][wr](prop, newval, oldval);
+                obj.watchers[prop][wr].call(obj, prop, newval, oldval);
             }
         }
     };
