@@ -2,11 +2,7 @@
 
 ##compatibility
 Works with: IE 9+, FF 4+, SF 5+, WebKit, CH 7+, OP 12+, BESEN, Rhino 1.7+
-<<<<<<< HEAD
-If you want a similar API that works for all browsers, try [MultiGetSet](https://gist.github.com/2956493)
-=======
 In the next update it will work for all browsers ;)
->>>>>>> fix issue #12 - no more modifying Object.prototyp
 
 ## About
 
@@ -22,11 +18,7 @@ var ex1 = {
 };
 
 //defining a 'watcher' for an attribute
-<<<<<<< HEAD
-ex1.watch("attr1", function(){
-=======
 watch(ex1, "attr1", function(){
->>>>>>> fix issue #12 - no more modifying Object.prototyp
 	alert("attr1 changed!");
 });
 
@@ -47,13 +39,8 @@ var ex2 = {
 };
 
 //defining a 'watcher' for the attributes
-<<<<<<< HEAD
-ex2.watch(["attr2", "attr3"], function(){
-	alert("attr2 or attr3 changed!");
-=======
 watch(ex2, ["attr2", "attr3"], function(){
     alert("attr2 or attr3 changes!");
->>>>>>> fix issue #12 - no more modifying Object.prototyp
 });
 
 //when changing one of the attributes its watcher will be invoked
@@ -73,13 +60,9 @@ var ex3 = {
 };
 
 //defining a 'watcher' for the object
-<<<<<<< HEAD
-ex3.watch(function(){
-	alert("some attribute of ex3 changed!");
-=======
+
 watch(ex3, function(){
     alert("some attribute of ex3 changes!");
->>>>>>> fix issue #12 - no more modifying Object.prototyp
 });
 
 //when changing one of the attributes of the object the watcher will be invoked
@@ -101,15 +84,9 @@ var obj = {
         alert(obj.name + ", " + obj.phrase);
     }
 }
-<<<<<<< HEAD
-
-obj.watch("name", obj.alert);
-obj.watch("name", obj.alert2);
-=======
     
 watch(obj, "name", obj.alert);
 watch(obj, "name", obj.alert2);
->>>>>>> fix issue #12 - no more modifying Object.prototyp
 
 obj.name = "johnny";
 
@@ -158,13 +135,8 @@ watch(ex1, "attr1", function(){
 });
 
 //defining other 'watcher' for another attribute
-<<<<<<< HEAD
-ex1.watch("attr2", function(){
-    alert("attr2 changed");
-=======
 watch(ex1, "attr2", function(){
     alert("attr2 changes");
->>>>>>> fix issue #12 - no more modifying Object.prototyp
 });
 
 
@@ -185,13 +157,8 @@ var ex6 = {
 };
 
 //defining a 'watcher' for the object
-<<<<<<< HEAD
-ex6.watch(function(){
-	alert("some attribute of ex6 changed!")
-=======
 watch(ex6, function(){
     alert("some attribute of ex6 changes!")
->>>>>>> fix issue #12 - no more modifying Object.prototyp
 });
 
 ex6.attr3 = null; //no watcher will be invoked
@@ -210,13 +177,8 @@ var ex7 = {
 };
 
 //defining a 'watcher' for the object
-<<<<<<< HEAD
-ex7.watch(function(){
-	alert("some attribute of ex6 changed!")
-=======
 watch(ex7, function(){
     alert("some attribute of ex6 changes!")
->>>>>>> fix issue #12 - no more modifying Object.prototyp
 });
 
 callWatchers(ex7, "attr1"); //invoke the watcher​​
@@ -230,13 +192,8 @@ callWatchers(ex7, "attr1"); //invoke the watcher​​
 $(function(){
 
     var obj = {cont: 0};
-<<<<<<< HEAD
-
-    obj.watch("cont", function(){
-=======
     
     watch(obj, "cont", function(){
->>>>>>> fix issue #12 - no more modifying Object.prototyp
         alert("obj.cont = "+obj.cont);
     });
 
@@ -312,8 +269,4 @@ watch(orange, function(){
 
 orange.type = "other";
 ```
-<<<<<<< HEAD
-[Try out](http://jsfiddle.net/t94Vv/)
-=======
 [Try out](http://jsfiddle.net/t94Vv/30/)
->>>>>>> fix issue #12 - no more modifying Object.prototyp
