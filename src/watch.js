@@ -9,8 +9,9 @@
  * FORK:
  * https://github.com/melanke/Watch.JS
  */
-
-"use strict";
+/*jslint devel:true, es5:true, forin:true, newcap:true, white:true */
+/*globals define, exports, module, window */
+//"use strict";
 (function (factory) {
     if (typeof exports === 'object') {
         // Node. Does not work with strict CommonJS, but
@@ -28,36 +29,33 @@
         window.callWatchers = window.WatchJS.callWatchers;
     }
 }(function () {
-
-    var WatchJS = {
-
+    var WatchJS, callWatchers, defineArrayMethodWatcher, unwatch, unwatchAll, unwatchMany, unwatchOne, watch, watchAll, watchFunctions, watchMany, watchOne;
+    WatchJS = {
         noMore: false,
-
         isFunction: function (functionToCheck) {
             var getType = {};
             return functionToCheck && getType.toString.call(functionToCheck) == '[object Function]';
         },
-
         isInt: function (x) {
             return x % 1 === 0;
         },
-        isArray: function(obj) {
+        isArray: function (obj) {
             return Object.prototype.toString.call(obj) === '[object Array]';
         },
         defineGetAndSet: function (obj, propName, getter, setter) {
             try {
-                    Object.defineProperty(obj, propName, {
-                            get: getter,
-                            set: setter,
-                            enumerable: true,
-                            configurable: true
-                    });
-            } catch(error) {
-                try{
+                Object.defineProperty(obj, propName, {
+                    get: getter,
+                    set: setter,
+                    enumerable: true,
+                    configurable: true
+                });
+            } catch (error) {
+                try {
                     Object.prototype.__defineGetter__.call(obj, propName, getter);
                     Object.prototype.__defineSetter__.call(obj, propName, setter);
-                }catch(error2){
-                    throw "watchJS error: browser not supported :/"
+                } catch (error2) {
+                    throw "watchJS error: browser not supported :/";
                 }
             }
         },
@@ -69,182 +67,158 @@
                     writable: false,
                     value: value
                 });
-            } catch(error) {
+            } catch (error) {
                 obj[propName] = value;
             }
         }
     };
-
-    var watch = function () {
-
-        if (arguments.length == 2) 
+    watch = function (a, b) {
+        if (arguments.length == 2) {
             watchAll.apply(this, arguments);
-        else if (WatchJS.isArray(arguments[1])) 
+        } else if (WatchJS.isArray(b)) {
             watchMany.apply(this, arguments);
-        else
+        } else {
             watchOne.apply(this, arguments);
-
+        }
     };
-
-
-    var watchAll = function (obj, watcher) {
-
-        if (obj instanceof String || (!(obj instanceof Object) && !WatchJS.isArray(obj))) //accepts only objects and array (not string)
-            return;
-
-        var props = [];
-
-
-        if(WatchJS.isArray(obj)) {
-            for (var prop = 0; prop < obj.length; prop++) { //for each item if obj is an array 
+    watchAll = function (obj, watcher) {
+        var props = []
+        ,   prop
+        ,   prop2
+        ;
+        if (obj instanceof String || (!(obj instanceof Object) && !WatchJS.isArray(obj))) {
+            return; //accepts only objects and array (not string)
+        }
+        if (WatchJS.isArray(obj)) {
+            for (prop = 0; prop < obj.length; prop++) { //for each item if obj is an array
                 props.push(prop); //put in the props
             }
         } else {
-            for (var prop2 in obj) { //for each attribute if obj is an object
+            for (prop2 in obj) { //for each attribute if obj is an object
                 props.push(prop2); //put in the props
             }
         }
-
         watchMany(obj, props, watcher); //watch all itens of the props
     };
+    watchMany = function (obj, props, watcher) {
+        var prop, prop2;
 
-
-    var watchMany = function (obj, props, watcher) {
-
-        if(WatchJS.isArray(obj)) {
-            for (var prop in props) { //watch each iten of "props" if is an array
+        if (WatchJS.isArray(obj)) {
+            for (prop in props) { //watch each iten of "props" if is an array
                 watchOne(obj, props[prop], watcher);
             }
         } else {
-            for (var prop2 in props) { //watch each attribute of "props" if is an object
+            for (prop2 in props) { //watch each attribute of "props" if is an object
                 watchOne(obj, props[prop2], watcher);
             }
         }
     };
-
-    var watchOne = function (obj, prop, watcher) {
-
-        var val = obj[prop];
-
-        if(obj[prop] === undefined || WatchJS.isFunction(obj[prop])) { //dont watch if it is null or a function
+    watchOne = function (obj, prop, watcher) {
+        var val = obj[prop]
+        ,   getter
+        ,   setter
+        ;
+        if (obj[prop] === undefined || WatchJS.isFunction(obj[prop])) { //dont watch if it is null or a function
             return;
         }
-
-        if(obj[prop] != null) {
+        if (obj[prop] != null) {
             watchAll(obj[prop], watcher); //recursively watch all attributes of this
         }
-
         watchFunctions(obj, prop);
-
 
         if (!obj.watchers) {
             WatchJS.defineProp(obj, "watchers", {});
         }
-
         if (!obj.watchers[prop]) {
             obj.watchers[prop] = [];
         }
-
-
         obj.watchers[prop].push(watcher); //add the new watcher in the watchers array
-
-
-        var getter = function () {
+        getter = function () {
             return val;
         };
-
-
-        var setter = function (newval) {
+        setter = function (newval) {
             var oldval = val;
             val = newval;
 
-            if(obj[prop]){
+            if (obj[prop]) {
                 watchAll(obj[prop], watcher);
             }
-
             watchFunctions(obj, prop);
 
             if (JSON.stringify(oldval) !== JSON.stringify(newval)) {
-                if (!WatchJS.noMore){
+                if (!WatchJS.noMore) {
                     callWatchers(obj, prop, newval, oldval);
                     WatchJS.noMore = false;
                 }
             }
         };
-
-            WatchJS.defineGetAndSet(obj, prop, getter, setter);
-
-
+        WatchJS.defineGetAndSet(obj, prop, getter, setter);
     };
-
-    var unwatch = function () {
-
-        if (arguments.length == 2) 
+    unwatch = function (a, b) {
+        if (arguments.length == 2) {
             unwatchAll.apply(this, arguments);
-        else if (WatchJS.isArray(arguments[1])) 
+        } else if (WatchJS.isArray(b)) {
             unwatchMany.apply(this, arguments);
-        else
+        } else {
             unwatchOne.apply(this, arguments);
-
+        }
     };
-
-    var unwatchAll = function (obj, watcher) {
-
+    unwatchAll = function (obj, watcher) {
+        var props = []
+        ,   prop
+        ,   prop2
+        ;
         if (obj instanceof String || (!(obj instanceof Object) && !WatchJS.isArray(obj))) { //accepts only objects and array (not string)
             return;
         }
-
-        var props = [];
-
-
         if (WatchJS.isArray(obj)) {
-            for (var prop = 0; prop < obj.length; prop++) { //for each item if obj is an array 
+            for (prop = 0; prop < obj.length; prop++) { //for each item if obj is an array
                 props.push(prop); //put in the props
             }
         } else {
-            for (var prop2 in obj) { //for each attribute if obj is an object
+            for (prop2 in obj) { //for each attribute if obj is an object
                 props.push(prop2); //put in the props
             }
         }
-
         unwatchMany(obj, props, watcher); //watch all itens of the props
     };
-
-
-    var unwatchMany = function (obj, props, watcher) {
+    unwatchMany = function (obj, props, watcher) {
+        var prop, prop2;
 
         if (WatchJS.isArray(obj)) {
-            for (var prop in props) { //watch each iten of "props" if is an array
+            for (prop in props) { //watch each iten of "props" if is an array
                 unwatchOne(obj, props[prop], watcher);
             }
         } else {
-            for (var prop2 in props) { //watch each attribute of "props" if is an object
+            for (prop2 in props) { //watch each attribute of "props" if is an object
                 unwatchOne(obj, props[prop2], watcher);
             }
         }
     };
+    unwatchOne = function (obj, prop, watcher) {
+        var i, w;
 
-    var unwatchOne = function (obj, prop, watcher) {
-        for(var i in obj.watchers[prop]){
-            var w = obj.watchers[prop][i];
+        for (i in obj.watchers[prop]) {
+            w = obj.watchers[prop][i];
 
-            if(w == watcher)
+            if (w == watcher) {
                 obj.watchers[prop].splice(i, 1);
+            }
         }
     };
+    callWatchers = function (obj, prop, newval, oldval) {
+        var wr;
 
-    var callWatchers = function (obj, prop, newval, oldval) {
-
-        for (var wr in obj.watchers[prop]) {
-            if (WatchJS.isInt(wr)){
+        for (wr in obj.watchers[prop]) {
+            if (WatchJS.isInt(wr)) {
                 obj.watchers[prop][wr](prop, newval, oldval);
             }
         }
     };
-
-     // @todo code related to "watchFunctions" is certainly buggy
+    // @todo code related to "watchFunctions" is certainly buggy
     var methodNames = ['pop', 'push', 'reverse', 'shift', 'sort', 'slice', 'unshift'];
-    var defineArrayMethodWatcher = function (obj, prop, original, methodName) {
+    defineArrayMethodWatcher = function (obj, prop, original, methodName) {
+
         WatchJS.defineProp(obj[prop], methodName, function () {
             var response = original.apply(obj, arguments);
             watchOne(obj, obj[prop]);
@@ -254,24 +228,20 @@
             return response;
         });
     };
-
-    var watchFunctions = function(obj, prop) {
+    watchFunctions = function (obj, prop) {
+        var i, methodName;
 
         if ((!obj[prop]) || (obj[prop] instanceof String) || (!WatchJS.isArray(obj[prop]))) {
             return;
         }
-
-        for (var i = methodNames.length, methodName; i--;) {
+        for (i = methodNames.length; i--; i) {
             methodName = methodNames[i];
             defineArrayMethodWatcher(obj, prop, obj[prop][methodName], methodName);
         }
-
     };
-
     WatchJS.watch = watch;
     WatchJS.unwatch = unwatch;
     WatchJS.callWatchers = callWatchers;
 
     return WatchJS;
-
 }));
