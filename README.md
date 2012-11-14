@@ -3,8 +3,6 @@
 ##Compatible with all browsers
 But still with some bugs with older browsers
 
-In the next update it will work for all browsers ;)
-
 ## About
 
 Watch.JS is a small library that brings a lot of possibilities. You may know that the "Observer" design pattern involves executing some function when an observed object changes. Other libraries exist that do this, but with Watch.JS you will not have to change the way you develop. Take a look at the examples to see how simple it is to add Watch.JS to your code.
