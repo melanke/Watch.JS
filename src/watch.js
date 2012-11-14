@@ -50,8 +50,7 @@
     };
 
     var isModernBrowser = function () {
-        //return Object.defineProperty || Object.prototype.__defineGetter__;
-        return false;
+        return Object.defineProperty || Object.prototype.__defineGetter__;
     };
 
     var defineGetAndSet = function (obj, propName, getter, setter) {
