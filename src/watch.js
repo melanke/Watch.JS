@@ -133,8 +133,6 @@
 
     var watchOne = function (obj, prop, watcher) {
 
-        var val = obj[prop];
-
         if(obj[prop] === undefined || isFunction(obj[prop])) { //dont watch if it is null or a function
             return;
         }
@@ -197,6 +195,8 @@
     if(isModernBrowser()){
 
         defineWatcher = function (obj, prop, watcher) {
+
+            var val = obj[prop];
 
             watchFunctions(obj, prop);
 
