@@ -77,9 +77,9 @@
 
     var watch = function () {
 
-        if (arguments.length == 2) 
+        if (arguments.length == 2)
             watchAll.apply(this, arguments);
-        else if (WatchJS.isArray(arguments[1])) 
+        else if (WatchJS.isArray(arguments[1]))
             watchMany.apply(this, arguments);
         else
             watchOne.apply(this, arguments);
@@ -96,7 +96,7 @@
 
 
         if(WatchJS.isArray(obj)) {
-            for (var prop = 0; prop < obj.length; prop++) { //for each item if obj is an array 
+            for (var prop = 0; prop < obj.length; prop++) { //for each item if obj is an array
                 props.push(prop); //put in the props
             }
         } else {
@@ -179,9 +179,9 @@
 
     var unwatch = function () {
 
-        if (arguments.length == 2) 
+        if (arguments.length == 2)
             unwatchAll.apply(this, arguments);
-        else if (WatchJS.isArray(arguments[1])) 
+        else if (WatchJS.isArray(arguments[1]))
             unwatchMany.apply(this, arguments);
         else
             unwatchOne.apply(this, arguments);
@@ -198,7 +198,7 @@
 
 
         if (WatchJS.isArray(obj)) {
-            for (var prop = 0; prop < obj.length; prop++) { //for each item if obj is an array 
+            for (var prop = 0; prop < obj.length; prop++) { //for each item if obj is an array
                 props.push(prop); //put in the props
             }
         } else {
@@ -246,7 +246,7 @@
     var methodNames = ['pop', 'push', 'reverse', 'shift', 'sort', 'slice', 'unshift'];
     var defineArrayMethodWatcher = function (obj, prop, original, methodName) {
         WatchJS.defineProp(obj[prop], methodName, function () {
-            var response = original.apply(obj, arguments);
+            var response = original.apply(obj[prop], arguments);
             watchOne(obj, obj[prop]);
             if (methodName !== 'slice') {
                 callWatchers(obj, prop);
