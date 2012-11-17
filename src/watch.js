@@ -31,10 +31,10 @@
 
     var WatchJS = {
         noMore: false
-    };
-
-    var defineWatcher;
-    var unwatchOne;
+    },
+    defineWatcher,
+    unwatchOne,
+    callWatchers;
 
     var isFunction = function (functionToCheck) {
             var getType = {};
@@ -86,20 +86,22 @@
 
     var watch = function () {
 
-        if (arguments.length == 2) 
+        if (isFunction(arguments[1])) {
             watchAll.apply(this, arguments);
-        else if (isArray(arguments[1])) 
+        } else if (isArray(arguments[1])) {
             watchMany.apply(this, arguments);
-        else
+        } else {
             watchOne.apply(this, arguments);
+        }
 
     };
 
 
-    var watchAll = function (obj, watcher) {
+    var watchAll = function (obj, watcher, level) {
 
-        if (obj instanceof String || (!(obj instanceof Object) && !isArray(obj))) //accepts only objects and array (not string)
+        if (obj instanceof String || (!(obj instanceof Object) && !isArray(obj))) { //accepts only objects and array (not string)
             return;
+        }
 
         var props = [];
 
@@ -114,31 +116,29 @@
             }
         }
 
-        watchMany(obj, props, watcher); //watch all itens of the props
+        watchMany(obj, props, watcher, level); //watch all itens of the props
     };
 
 
-    var watchMany = function (obj, props, watcher) {
+    var watchMany = function (obj, props, watcher, level) {
 
-        if(isArray(obj)) {
-            for (var prop in props) { //watch each iten of "props" if is an array
-                watchOne(obj, props[prop], watcher);
-            }
-        } else {
-            for (var prop2 in props) { //watch each attribute of "props" if is an object
-                watchOne(obj, props[prop2], watcher);
-            }
+        for (var prop in props) { //watch each attribute of "props" if is an object
+            watchOne(obj, props[prop], watcher, level);
         }
+        
     };
 
-    var watchOne = function (obj, prop, watcher) {
+    var watchOne = function (obj, prop, watcher, level) {
 
-        if(obj[prop] === undefined || isFunction(obj[prop])) { //dont watch if it is null or a function
+        if(isFunction(obj[prop])) { //dont watch if it is a function
             return;
         }
 
-        if(obj[prop] != null) {
-            watchAll(obj[prop], watcher); //recursively watch all attributes of this
+        if(obj[prop] != null && (level === undefined || level > 0)){
+            if(level !== undefined){
+                level--;
+            }
+            watchAll(obj[prop], watcher, level); //recursively watch all attributes of this
         }
 
         defineWatcher(obj, prop, watcher);
@@ -147,12 +147,13 @@
 
     var unwatch = function () {
 
-        if (arguments.length == 2) 
+        if (isFunction(arguments[1])) {
             unwatchAll.apply(this, arguments);
-        else if (isArray(arguments[1])) 
+        } else if (isArray(arguments[1])) {
             unwatchMany.apply(this, arguments);
-        else
+        } else {
             unwatchOne.apply(this, arguments);
+        }
 
     };
 
@@ -180,15 +181,9 @@
 
 
     var unwatchMany = function (obj, props, watcher) {
-
-        if (isArray(obj)) {
-            for (var prop in props) { //watch each iten of "props" if is an array
-                unwatchOne(obj, props[prop], watcher);
-            }
-        } else {
-            for (var prop2 in props) { //watch each attribute of "props" if is an object
-                unwatchOne(obj, props[prop2], watcher);
-            }
+       
+        for (var prop2 in props) { //watch each attribute of "props" if is an object
+            unwatchOne(obj, props[prop2], watcher);
         }
     };
 
@@ -221,7 +216,7 @@
                 var oldval = val;
                 val = newval;
 
-                if(obj[prop]){
+                if (obj[prop]){
                     watchAll(obj[prop], watcher);
                 }
 
@@ -239,7 +234,7 @@
 
         };
 
-        var callWatchers = function (obj, prop, newval, oldval) {
+        callWatchers = function (obj, prop, newval, oldval) {
 
             for (var wr in obj.watchers[prop]) {
                 if (isInt(wr)){
@@ -278,8 +273,9 @@
             for(var i in obj.watchers[prop]){
                 var w = obj.watchers[prop][i];
 
-                if(w == watcher)
+                if(w == watcher) {
                     obj.watchers[prop].splice(i, 1);
+                }
             }
         };
 
