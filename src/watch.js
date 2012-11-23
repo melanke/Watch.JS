@@ -107,7 +107,7 @@
 
 
         if(isArray(obj)) {
-            for (var prop = 0; prop < obj.length; prop++) { //for each item if obj is an array 
+            for (var prop = 0; prop < obj.length; prop++) { //for each item if obj is an array
                 props.push(prop); //put in the props
             }
         } else {
@@ -125,7 +125,7 @@
         for (var prop in props) { //watch each attribute of "props" if is an object
             watchOne(obj, props[prop], watcher, level);
         }
-        
+
     };
 
     var watchOne = function (obj, prop, watcher, level) {
@@ -167,7 +167,7 @@
 
 
         if (isArray(obj)) {
-            for (var prop = 0; prop < obj.length; prop++) { //for each item if obj is an array 
+            for (var prop = 0; prop < obj.length; prop++) { //for each item if obj is an array
                 props.push(prop); //put in the props
             }
         } else {
@@ -181,7 +181,7 @@
 
 
     var unwatchMany = function (obj, props, watcher) {
-       
+
         for (var prop2 in props) { //watch each attribute of "props" if is an object
             unwatchOne(obj, props[prop2], watcher);
         }
@@ -222,8 +222,8 @@
 
                 watchFunctions(obj, prop);
 
-                if (JSON.stringify(oldval) !== JSON.stringify(newval)) {
-                    if (!WatchJS.noMore){
+                if (!WatchJS.noMore){
+                    if (JSON.stringify(oldval) !== JSON.stringify(newval)) {
                         callWatchers(obj, prop, newval, oldval);
                         WatchJS.noMore = false;
                     }
@@ -285,7 +285,7 @@
         //but I think we could think something to fix it
 
         var subjects = [];
-    
+
         defineWatcher = function(obj, prop, watcher){
 
             subjects.push({
@@ -305,9 +305,9 @@
                 if (subj.obj == obj && subj.prop == prop && subj.watcher == watcher) {
                     subjects.splice(i, 1);
                 }
-                
+
             }
-            
+
         };
 
         callWatchers = function (obj, prop) {
@@ -318,26 +318,26 @@
                 if (subj.obj == obj && subj.prop == prop) {
                     subj.watcher.call(obj, prop);
                 }
-                
+
             }
-            
+
         };
-            
+
         var loop = function(){
-            
+
             for(var i in subjects){
-                
+
                 var subj = subjects[i];
                 var newSer = JSON.stringify(subj.obj[subj.prop]);
                 if(newSer != subj.serialized){
                     subj.watcher.call(subj.obj, subj.prop, subj.obj[subj.prop], JSON.parse(subj.serialized));
                     subj.serialized = newSer;
                 }
-                
+
             }
-            
+
         };
-            
+
         setInterval(loop, 50);
 
     }
