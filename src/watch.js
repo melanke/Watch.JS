@@ -224,7 +224,7 @@
 
                 if (!WatchJS.noMore){
                     if (JSON.stringify(oldval) !== JSON.stringify(newval)) {
-                        callWatchers(obj, prop, newval, oldval);
+                        callWatchers(obj, prop, "set", newval, oldval);
                         WatchJS.noMore = false;
                     }
                 }
@@ -234,11 +234,11 @@
 
         };
 
-        callWatchers = function (obj, prop, newval, oldval) {
+        callWatchers = function (obj, prop, action, newval, oldval) {
 
             for (var wr in obj.watchers[prop]) {
                 if (isInt(wr)){
-                    obj.watchers[prop][wr].call(obj, prop, newval, oldval);
+                    obj.watchers[prop][wr].call(obj, prop, action, newval, oldval);
                 }
             }
         };
@@ -250,7 +250,7 @@
                 var response = original.apply(obj[prop], arguments);
                 watchOne(obj, obj[prop]);
                 if (methodName !== 'slice') {
-                    callWatchers(obj, prop);
+                    callWatchers(obj, prop, methodName,arguments);
                 }
                 return response;
             });
@@ -310,13 +310,13 @@
 
         };
 
-        callWatchers = function (obj, prop) {
+        callWatchers = function (obj, prop, action, value) {
 
             for (var i in subjects) {
                 var subj = subjects[i];
 
                 if (subj.obj == obj && subj.prop == prop) {
-                    subj.watcher.call(obj, prop);
+                    subj.watcher.call(obj, prop, action, value);
                 }
 
             }
