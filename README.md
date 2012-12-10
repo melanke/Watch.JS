@@ -106,15 +106,15 @@ var ex1 = {
 };
 
 //defining a 'watcher' for an attribute
-watch(ex1, "attr1", function(prop, newvalue, oldvalue){
-    alert(prop+" - new: "+newvalue+", old: "+oldvalue+"... and the context: "+JSON.stringify(this));
+watch(ex1, "attr1", function(prop, action, newvalue, oldvalue){
+    alert(prop+" - action: "+action+" - new: "+newvalue+", old: "+oldvalue+"... and the context: "+JSON.stringify(this));
 });
 
 //when changing the attribute its watcher will be invoked
 ex1.attr1 = "other value";​
 ```
 
-[Try out](http://jsfiddle.net/XnbXS/6/)
+[Try out](http://jsfiddle.net/XnbXS/11/)
 
 ## Don't worry about the Infinite Loop
 
