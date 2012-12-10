@@ -144,9 +144,9 @@ ex1.attr1 = "other value to 1"; //attr1 will be changed but will not invoke the 
 
 [Try out](http://jsfiddle.net/z2sJr/9/)
 
-## Chill out, no surprises, new attributes will not be considered
+## Chill out, no surprises, only expected attributes will not be considered
 
-After declaring a watcher for some object, when you add new attributes to this object and/or change it, the watcher will not be invoked. If you want the new attributes to be observed you only need to add the watcher to these new attributes again.
+After declaring a watcher for some object, when you add new attributes to this object and/or change it, the watcher will not be invoked. If you want the new attributes to be observed you need to specify the name of this new attributes.
 
 ```javascript
 //defining our object however we like
@@ -165,6 +165,25 @@ ex6.attr3 = "value"; //no watcher will be invoked​​​
 ```
 
 [Try out](http://jsfiddle.net/NFmUc/3/)
+
+An example how to define a watcher of an undefined attribute
+
+```javascript
+//defining our object however we like
+var ex6 = {
+    attr1: 0,
+    attr2: 1
+};
+
+//defining a 'watcher' for the specific attribute
+watch(ex6, "attr3", function(){
+    alert("some attribute of ex6 changes!")
+});
+
+ex6.attr3 = "value"; //no watcher will be invoked​​​
+```
+
+[Try out](http://jsfiddle.net/ENdG4/)
 
 ## Invoke the watcher anytime you want
 
