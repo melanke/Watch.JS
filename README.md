@@ -144,6 +144,40 @@ ex1.attr1 = "other value to 1"; //attr1 will be changed but will not invoke the 
 
 [Try out](http://jsfiddle.net/z2sJr/9/)
 
+## How deep you wanna go? Provide a level of children
+
+```javascript
+//defining our object no matter which way we want
+var ex = {
+    //level 0
+    l1a: "bla bla",
+    l1b: {
+        //level 1 or less
+        l2a: "lo lo",
+        l2b: {
+            //level 2 or less
+            deeper: "so deep"
+        }           
+    }
+};
+
+watch(ex, function(){
+    alert("ex changes at lvl 2 or less");
+}, 1);
+
+watch(ex, function(){
+    alert("ex changes at lvl 3 or less");
+}, 2);
+
+
+ex.l1b.l2b.deeper = "other value";
+
+
+ex.l1b.l2b = "other value";
+```
+
+[Try out](http://jsfiddle.net/7AwbW/2/)
+
 ## Chill out, no surprises, only expected attributes will be considered
 
 After declaring a watcher for some object, when you add new attributes to this object and/or change it, the watcher will not be invoked. If you want the new attributes to be observed you need to specify the name of this new attributes.
@@ -177,10 +211,10 @@ var ex6 = {
 
 //defining a 'watcher' for the specific attribute
 watch(ex6, "attr3", function(){
-    alert("some attribute of ex6 changes!")
+    alert("attr3 changes")
 });
 
-ex6.attr3 = "value"; //no watcher will be invoked​​​
+ex6.attr3 = "value"; //watcher will be invoked
 ```
 
 [Try out](http://jsfiddle.net/ENdG4/)
