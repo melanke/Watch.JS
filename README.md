@@ -144,7 +144,7 @@ ex1.attr1 = "other value to 1"; //attr1 will be changed but will not invoke the 
 
 [Try out](http://jsfiddle.net/z2sJr/9/)
 
-## Chill out, no surprises, only expected attributes will not be considered
+## Chill out, no surprises, only expected attributes will be considered
 
 After declaring a watcher for some object, when you add new attributes to this object and/or change it, the watcher will not be invoked. If you want the new attributes to be observed you need to specify the name of this new attributes.
 
