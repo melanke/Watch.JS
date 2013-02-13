@@ -1,0 +1,22 @@
+{
+  "name": "watchjs",
+  "version": "0.0.0",
+  "description": "A utility for watching object changes.",
+  "main": "src/watch.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/melanke/Watch.JS.git"
+  },
+  "keywords": [
+    "watch",
+    "object",
+    "changes"
+  ],
+  "author": "melanke",
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "gitHead": "05f676438a6f68598341793640549e8f476f8663"
+}
