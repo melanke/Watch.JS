@@ -32,9 +32,7 @@
     var WatchJS = {
         noMore: false
     },
-    defineWatcher,
-    unwatchOne,
-    callWatchers;
+    lengthsubjects = [];
 
     var isFunction = function (functionToCheck) {
             var getType = {};
@@ -49,9 +47,46 @@
         return Object.prototype.toString.call(obj) === '[object Array]';
     };
 
-    var isModernBrowser = function () {
-        return Object.defineProperty || Object.prototype.__defineGetter__;
+    var getObjDiff = function(a, b){
+        var aplus = [],
+        bplus = [];
+
+        if(!(typeof a == "string") && !(typeof b == "string") && !isArray(a) && !isArray(b)){
+
+            for(var i in a){
+                if(!b[i]){
+                    aplus.push(i);
+                }
+            }
+
+            for(var j in b){
+                if(!a[j]){
+                    bplus.push(j);
+                }
+            }
+        }
+
+        return {
+            added: aplus,
+            removed: bplus
+        }
     };
+
+    var clone = function(obj){
+
+        if (null == obj || "object" != typeof obj) {
+            return obj;
+        }
+
+        var copy = obj.constructor();
+
+        for (var attr in obj) {
+            copy[attr] = obj[attr];
+        }
+
+        return copy;
+
+    }
 
     var defineGetAndSet = function (obj, propName, getter, setter) {
         try {
@@ -97,9 +132,9 @@
     };
 
 
-    var watchAll = function (obj, watcher, level) {
+    var watchAll = function (obj, watcher, level, addNRemove) {
 
-        if (obj instanceof String || (!(obj instanceof Object) && !isArray(obj))) { //accepts only objects and array (not string)
+        if ((typeof obj == "string") || (!(obj instanceof Object) && !isArray(obj))) { //accepts only objects and array (not string)
             return;
         }
 
@@ -116,19 +151,27 @@
             }
         }
 
-        watchMany(obj, props, watcher, level); //watch all itens of the props
+        watchMany(obj, props, watcher, level, addNRemove); //watch all itens of the props
     };
 
 
-    var watchMany = function (obj, props, watcher, level) {
+    var watchMany = function (obj, props, watcher, level, addNRemove) {
+
+        if ((typeof obj == "string") || (!(obj instanceof Object) && !isArray(obj))) { //accepts only objects and array (not string)
+            return;
+        }
 
         for (var prop in props) { //watch each attribute of "props" if is an object
-            watchOne(obj, props[prop], watcher, level);
+            watchOne(obj, props[prop], watcher, level, addNRemove);
         }
 
     };
 
-    var watchOne = function (obj, prop, watcher, level) {
+    var watchOne = function (obj, prop, watcher, level, addNRemove) {
+
+        if ((typeof obj == "string") || (!(obj instanceof Object) && !isArray(obj))) { //accepts only objects and array (not string)
+            return;
+        }
 
         if(isFunction(obj[prop])) { //dont watch if it is a function
             return;
@@ -142,6 +185,10 @@
         }
 
         defineWatcher(obj, prop, watcher);
+
+        if(addNRemove){
+            pushToLengthSubjects(obj, prop, watcher, level);
+        }
 
     };
 
@@ -187,160 +234,151 @@
         }
     };
 
-    if(isModernBrowser()){
+    var defineWatcher = function (obj, prop, watcher) {
 
-        defineWatcher = function (obj, prop, watcher) {
+        var val = obj[prop];
 
-            var val = obj[prop];
+        watchFunctions(obj, prop);
+
+        if (!obj.watchers) {
+            defineProp(obj, "watchers", {});
+        }
+
+        if (!obj.watchers[prop]) {
+            obj.watchers[prop] = [];
+        }
+
+        for(var i in obj.watchers[prop]){
+            if(obj.watchers[prop][i] === watcher){
+                return;
+            }
+        }
+
+
+        obj.watchers[prop].push(watcher); //add the new watcher in the watchers array
+
+
+        var getter = function () {
+            return val;
+        };
+
+
+        var setter = function (newval) {
+            var oldval = val;
+            val = newval;
+
+            if (obj[prop]){
+                watchAll(obj[prop], watcher);
+            }
 
             watchFunctions(obj, prop);
 
-            if (!obj.watchers) {
-                defineProp(obj, "watchers", {});
-            }
-
-            if (!obj.watchers[prop]) {
-                obj.watchers[prop] = [];
-            }
-
-
-            obj.watchers[prop].push(watcher); //add the new watcher in the watchers array
-
-
-            var getter = function () {
-                return val;
-            };
-
-
-            var setter = function (newval) {
-                var oldval = val;
-                val = newval;
-
-                if (obj[prop]){
-                    watchAll(obj[prop], watcher);
+            if (!WatchJS.noMore){
+                if (JSON.stringify(oldval) !== JSON.stringify(newval)) {
+                    callWatchers(obj, prop, "set", newval, oldval);
+                    WatchJS.noMore = false;
                 }
+            }
+        };
 
-                watchFunctions(obj, prop);
+        defineGetAndSet(obj, prop, getter, setter);
 
-                if (!WatchJS.noMore){
-                    if (JSON.stringify(oldval) !== JSON.stringify(newval)) {
-                        callWatchers(obj, prop, "set", newval, oldval);
-                        WatchJS.noMore = false;
+    };
+
+    var callWatchers = function (obj, prop, action, newval, oldval) {
+
+        for (var wr in obj.watchers[prop]) {
+            if (isInt(wr)){
+                obj.watchers[prop][wr].call(obj, prop, action, newval, oldval);
+            }
+        }
+    };
+
+    // @todo code related to "watchFunctions" is certainly buggy
+    var methodNames = ['pop', 'push', 'reverse', 'shift', 'sort', 'slice', 'unshift'];
+    var defineArrayMethodWatcher = function (obj, prop, original, methodName) {
+        defineProp(obj[prop], methodName, function () {
+            var response = original.apply(obj[prop], arguments);
+            watchOne(obj, obj[prop]);
+            if (methodName !== 'slice') {
+                callWatchers(obj, prop, methodName,arguments);
+            }
+            return response;
+        });
+    };
+
+    var watchFunctions = function(obj, prop) {
+
+        if ((!obj[prop]) || (obj[prop] instanceof String) || (!isArray(obj[prop]))) {
+            return;
+        }
+
+        for (var i = methodNames.length, methodName; i--;) {
+            methodName = methodNames[i];
+            defineArrayMethodWatcher(obj, prop, obj[prop][methodName], methodName);
+        }
+
+    };
+
+    var unwatchOne = function (obj, prop, watcher) {
+        for(var i in obj.watchers[prop]){
+            var w = obj.watchers[prop][i];
+
+            if(w == watcher) {
+                obj.watchers[prop].splice(i, 1);
+            }
+        }
+
+        removeFromLengthSubjects(obj, prop, watcher);
+    };
+
+    var loop = function(){
+
+        for(var i in lengthsubjects){
+
+            var subj = lengthsubjects[i];
+            var difference = getObjDiff(subj.obj[subj.prop], subj.actual);
+            
+            if(difference.added.length || difference.removed.length){
+                if(difference.added.length){
+                    for(var j in subj.obj.watchers[subj.prop]){
+                        watchMany(subj.obj[subj.prop], difference.added, subj.obj.watchers[subj.prop][j], subj.level - 1, true);
                     }
                 }
-            };
 
-            defineGetAndSet(obj, prop, getter, setter);
-
-        };
-
-        callWatchers = function (obj, prop, action, newval, oldval) {
-
-            for (var wr in obj.watchers[prop]) {
-                if (isInt(wr)){
-                    obj.watchers[prop][wr].call(obj, prop, action, newval, oldval);
-                }
+                callWatchers(subj.obj, subj.prop, "differentattr", difference, subj.actual);
             }
-        };
+            subj.actual = clone(subj.obj[subj.prop]);
 
-        // @todo code related to "watchFunctions" is certainly buggy
-        var methodNames = ['pop', 'push', 'reverse', 'shift', 'sort', 'slice', 'unshift'];
-        var defineArrayMethodWatcher = function (obj, prop, original, methodName) {
-            defineProp(obj[prop], methodName, function () {
-                var response = original.apply(obj[prop], arguments);
-                watchOne(obj, obj[prop]);
-                if (methodName !== 'slice') {
-                    callWatchers(obj, prop, methodName,arguments);
-                }
-                return response;
-            });
-        };
+        }
 
-        var watchFunctions = function(obj, prop) {
+    };
 
-            if ((!obj[prop]) || (obj[prop] instanceof String) || (!isArray(obj[prop]))) {
-                return;
+    var pushToLengthSubjects = function(obj, prop, watcher, level){
+        
+
+        lengthsubjects.push({
+            obj: obj,
+            prop: prop,
+            actual: clone(obj[prop]),
+            watcher: watcher,
+            level: level
+        });
+    };
+
+    var removeFromLengthSubjects = function(obj, prop, watcher){
+
+        for (var i in lengthsubjects) {
+            var subj = lengthsubjects[i];
+
+            if (subj.obj == obj && subj.prop == prop && subj.watcher == watcher) {
+                lengthsubjects.splice(i, 1);
             }
+        }
 
-            for (var i = methodNames.length, methodName; i--;) {
-                methodName = methodNames[i];
-                defineArrayMethodWatcher(obj, prop, obj[prop][methodName], methodName);
-            }
+    };
 
-        };
-
-        unwatchOne = function (obj, prop, watcher) {
-            for(var i in obj.watchers[prop]){
-                var w = obj.watchers[prop][i];
-
-                if(w == watcher) {
-                    obj.watchers[prop].splice(i, 1);
-                }
-            }
-        };
-
-    } else {
-        //this implementation dont work because it cant handle the gap between "settings".
-        //I mean, if you use a setter for an attribute after another setter of the same attribute it will only fire the second
-        //but I think we could think something to fix it
-
-        var subjects = [];
-
-        defineWatcher = function(obj, prop, watcher){
-
-            subjects.push({
-                obj: obj,
-                prop: prop,
-                serialized: JSON.stringify(obj[prop]),
-                watcher: watcher
-            });
-
-        };
-
-        unwatchOne = function (obj, prop, watcher) {
-
-            for (var i in subjects) {
-                var subj = subjects[i];
-
-                if (subj.obj == obj && subj.prop == prop && subj.watcher == watcher) {
-                    subjects.splice(i, 1);
-                }
-
-            }
-
-        };
-
-        callWatchers = function (obj, prop, action, value) {
-
-            for (var i in subjects) {
-                var subj = subjects[i];
-
-                if (subj.obj == obj && subj.prop == prop) {
-                    subj.watcher.call(obj, prop, action, value);
-                }
-
-            }
-
-        };
-
-        var loop = function(){
-
-            for(var i in subjects){
-
-                var subj = subjects[i];
-                var newSer = JSON.stringify(subj.obj[subj.prop]);
-                if(newSer != subj.serialized){
-                    subj.watcher.call(subj.obj, subj.prop, subj.obj[subj.prop], JSON.parse(subj.serialized));
-                    subj.serialized = newSer;
-                }
-
-            }
-
-        };
-
-        setInterval(loop, 50);
-
-    }
+    setInterval(loop, 50);
 
     WatchJS.watch = watch;
     WatchJS.unwatch = unwatch;

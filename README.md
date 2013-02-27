@@ -1,11 +1,37 @@
-# Watch.js 1.2.0 [Download](https://raw.github.com/melanke/Watch.JS/master/src/watch.js)
-
-##Compatible with all browsers
-But still with some bugs with older browsers
+# Watch.js 1.3.0 [Download](https://raw.github.com/melanke/Watch.JS/master/src/watch.js)
 
 ## About
 
 Watch.JS is a small library that brings a lot of possibilities. You may know that the "Observer" design pattern involves executing some function when an observed object changes. Other libraries exist that do this, but with Watch.JS you will not have to change the way you develop. Take a look at the examples to see how simple it is to add Watch.JS to your code.
+
+##Compatible with all serious browsers :P
+Works with: IE 9+, FF 4+, SF 5+, WebKit, CH 7+, OP 12+, BESEN, Node.JS , Rhino 1.7+
+
+#### HTML Script TAG
+```html
+<script src="watch.js" type="text/javascript"></script>
+<!-- watch will be global variable -->
+```
+
+#### RequireJS
+```javascript
+require("watch", function(WatchJS){
+    var watch = WatchJS.watch;
+    var unwatch = WatchJS.unwatch;
+    var callWatchers = WatchJS.callWatchers;
+});
+```
+
+#### Node.JS Require
+npm install watchjs
+```javascript
+var WatchJS = require("watchjs")
+var watch = WatchJS.watch;
+var unwatch = WatchJS.unwatch;
+var callWatchers = WatchJS.callWatchers;
+```
+
+# Examples
 
 ## Observe the changes of one object attribute
 
@@ -178,9 +204,9 @@ ex.l1b.l2b = "other value";
 
 [Try out](http://jsfiddle.net/7AwbW/2/)
 
-## Chill out, no surprises, only expected attributes will be considered
+## By default new attributes will be ignored
 
-After declaring a watcher for some object, when you add new attributes to this object and/or change it, the watcher will not be invoked. If you want the new attributes to be observed you need to specify the name of this new attributes.
+After declaring a watcher for some object, when you add new attributes to this object and/or change it, the watcher will not be invoked.
 
 ```javascript
 //defining our object however we like
@@ -200,24 +226,34 @@ ex6.attr3 = "value"; //no watcher will be invoked​​​
 
 [Try out](http://jsfiddle.net/NFmUc/3/)
 
-An example how to define a watcher of an undefined attribute
+## Do you want to know when new attributes changes too?
+
+Well this is not perfect, you may have to wait 50 miliseconds
 
 ```javascript
-//defining our object however we like
-var ex6 = {
-    attr1: 0,
-    attr2: 1
+//defining our object no matter which way we want
+var ex = {
+    l1a: "bla bla",
+    l1b: {
+        l2a: "lo lo",
+        l2b: "hey hey"        
+    }
 };
 
-//defining a 'watcher' for the specific attribute
-watch(ex6, "attr3", function(){
-    alert("attr3 changes")
-});
+watch(ex, function (prop, action, difference, oldvalue){
+    
+    alert("prop: "+prop+"\n action: "+action+"\n difference: "+JSON.stringify(difference)+"\n old: "+JSON.stringify(oldvalue)+"\n ... and the context: "+JSON.stringify(this));    
+    
+}, 0, true);
 
-ex6.attr3 = "value"; //watcher will be invoked
+
+ex.l1b.l2c = "new attr"; //it is not instantaneous, you may wait 50 miliseconds
+
+setTimeout(function(){
+    ex.l1b.l2c = "other value";
+}, 100);
 ```
-
-[Try out](http://jsfiddle.net/ENdG4/)
+[Try out](http://jsfiddle.net/wXWPQ/)
 
 ## Invoke the watcher anytime you want
 
