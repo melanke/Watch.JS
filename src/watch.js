@@ -286,10 +286,15 @@
     };
 
     var callWatchers = function (obj, prop, action, newval, oldval) {
-
-        for (var wr in obj.watchers[prop]) {
-            if (isInt(wr)){
-                obj.watchers[prop][wr].call(obj, prop, action, newval, oldval);
+        if (prop) {
+            for (var wr in obj.watchers[prop]) {
+                if (isInt(wr)) {
+                    obj.watchers[prop][wr].call(obj, prop, action, newval || obj[prop], oldval);
+                }
+            }
+        } else {
+            for (var prop in obj) {//call all
+                callWatchers(obj, prop, action, newval, oldval);
             }
         }
     };
