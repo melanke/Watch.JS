@@ -101,7 +101,7 @@
                 Object.prototype.__defineGetter__.call(obj, propName, getter);
                 Object.prototype.__defineSetter__.call(obj, propName, setter);
             }catch(error2){
-                throw "watchJS error: browser not supported :/"
+                throw new Error("watchJS error: browser not supported :/")
             }
         }
     };
