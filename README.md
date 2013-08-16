@@ -2,7 +2,7 @@
 
 ## About
 
-Watch.JS is a small library that brings a lot of possibilities. You may know that the "Observer" design pattern involves executing some function when an observed object changes. Other libraries exist that do this, but with Watch.JS you will not have to change the way you develop. Take a look at the examples to see how simple it is to add Watch.JS to your code.
+Watch.JS is a small library with a lot of possibilities. You may know that the "Observer" design pattern involves executing some function when an observed object changes. Other libraries exist that do this, but with Watch.JS you will not have to change the way you develop. Take a look at the examples to see how simple it is to add Watch.JS to your code.
 
 ##Compatible with all serious browsers :P
 Works with: IE 9+, FF 4+, SF 5+, WebKit, CH 7+, OP 12+, BESEN, Node.JS , Rhino 1.7+
@@ -65,7 +65,7 @@ var ex2 = {
 
 //defining a 'watcher' for the attributes
 watch(ex2, ["attr2", "attr3"], function(){
-    alert("attr2 or attr3 changes!");
+    alert("attr2 or attr3 changed!");
 });
 
 //when changing one of the attributes its watcher will be invoked
@@ -161,7 +161,7 @@ watch(ex1, "attr1", function(){
 
 //defining other 'watcher' for another attribute
 watch(ex1, "attr2", function(){
-    alert("attr2 changes");
+    alert("attr2 changed");
 });
 
 
@@ -188,11 +188,11 @@ var ex = {
 };
 
 watch(ex, function(){
-    alert("ex changes at lvl 2 or less");
+    alert("ex changed at lvl 2 or less");
 }, 1);
 
 watch(ex, function(){
-    alert("ex changes at lvl 3 or less");
+    alert("ex changed at lvl 3 or less");
 }, 2);
 
 
@@ -217,7 +217,7 @@ var ex6 = {
 
 //defining a 'watcher' for the object
 watch(ex6, function(){
-    alert("some attribute of ex6 changes!")
+    alert("some attribute of ex6 changed!")
 });
 
 ex6.attr3 = null; //no watcher will be invoked
@@ -226,7 +226,7 @@ ex6.attr3 = "value"; //no watcher will be invoked​​​
 
 [Try out](http://jsfiddle.net/NFmUc/3/)
 
-## Do you want to know when new attributes changes too?
+## Do you want to know when new attributes change too?
 
 Well this is not perfect, you may have to wait 50 miliseconds
 
@@ -266,7 +266,7 @@ var ex7 = {
 
 //defining a 'watcher' for the object
 watch(ex7, function(){
-    alert("some attribute of ex6 changes!")
+    alert("some attribute of ex6 changed!")
 });
 
 callWatchers(ex7, "attr1"); //invoke the watcher​​
