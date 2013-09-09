@@ -51,7 +51,7 @@ watch(ex1, "attr1", function(){
 ex1.attr1 = "other value";
 ```
 
-[Try out](http://jsfiddle.net/NbJuh/17/)
+[Try out](http://jsfiddle.net/NbJuh/62/)
 
 ## Observe the changes of more than one object attribute
 
@@ -72,7 +72,7 @@ watch(ex2, ["attr2", "attr3"], function(){
 ex2.attr2 = 50;​
 ```
 
-[Try out](http://jsfiddle.net/2zT4C/6/)
+[Try out](http://jsfiddle.net/2zT4C/22/)
 
 ## Observe the changes of all attributes of the object
 
@@ -94,7 +94,7 @@ watch(ex3, function(){
 ex3.attr3.push("new value");​
 ```
 
-[Try out](http://jsfiddle.net/C83pW/3/)
+[Try out](http://jsfiddle.net/C83pW/25/)
 
 ## Remove a Watcher
 
@@ -120,7 +120,7 @@ unwatch(obj, "name", obj.alert);
 obj.name = "phil";​
 ```
 
-[Try out](http://jsfiddle.net/SZ2Ut/3/)
+[Try out](http://jsfiddle.net/SZ2Ut/9/)
 
 ## More information about the change
 
@@ -140,7 +140,7 @@ watch(ex1, "attr1", function(prop, action, newvalue, oldvalue){
 ex1.attr1 = "other value";​
 ```
 
-[Try out](http://jsfiddle.net/XnbXS/11/)
+[Try out](http://jsfiddle.net/XnbXS/20/)
 
 ## Don't worry about the Infinite Loop
 
@@ -168,7 +168,7 @@ watch(ex1, "attr2", function(){
 ex1.attr1 = "other value to 1"; //attr1 will be changed but will not invoke the attr2`s watcher
 ```
 
-[Try out](http://jsfiddle.net/z2sJr/9/)
+[Try out](http://jsfiddle.net/z2sJr/16/)
 
 ## How deep you wanna go? Provide a level of children
 
@@ -202,7 +202,7 @@ ex.l1b.l2b.deeper = "other value";
 ex.l1b.l2b = "other value";
 ```
 
-[Try out](http://jsfiddle.net/7AwbW/2/)
+[Try out](http://jsfiddle.net/7AwbW/5/)
 
 ## By default new attributes will be ignored
 
@@ -224,7 +224,7 @@ ex6.attr3 = null; //no watcher will be invoked
 ex6.attr3 = "value"; //no watcher will be invoked​​​
 ```
 
-[Try out](http://jsfiddle.net/NFmUc/3/)
+[Try out](http://jsfiddle.net/NFmUc/6/)
 
 ## Do you want to know when new attributes changes too?
 
@@ -253,7 +253,7 @@ setTimeout(function(){
     ex.l1b.l2c = "other value";
 }, 100);
 ```
-[Try out](http://jsfiddle.net/wXWPQ/)
+[Try out](http://jsfiddle.net/wXWPQ/4/)
 
 ## Invoke the watcher anytime you want
 
@@ -272,7 +272,7 @@ watch(ex7, function(){
 callWatchers(ex7, "attr1"); //invoke the watcher​​
 ```
 
-[Try out](http://jsfiddle.net/98MmB/6/)
+[Try out](http://jsfiddle.net/98MmB/8/)
 
 ## Compatible with JQuery
 
@@ -290,7 +290,7 @@ $(function(){
     });
 });
 ```
-[Try out](http://jsfiddle.net/fj2Yb/6/)
+[Try out](http://jsfiddle.net/fj2Yb/24/)
 
 ## Different ways to build Classes/Objects and use Watch.JS
 
@@ -357,4 +357,4 @@ watch(orange, function(){
 
 orange.type = "other";
 ```
-[Try out](http://jsfiddle.net/t94Vv/30/)
+[Try out](http://jsfiddle.net/t94Vv/58/)

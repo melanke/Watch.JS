@@ -90,19 +90,29 @@
 
     var defineGetAndSet = function (obj, propName, getter, setter) {
         try {
-                Object.defineProperty(obj, propName, {
-                        get: getter,
-                        set: setter,
-                        enumerable: true,
-                        configurable: true
-                });
-        } catch(error) {
-            try{
-                Object.prototype.__defineGetter__.call(obj, propName, getter);
-                Object.prototype.__defineSetter__.call(obj, propName, setter);
-            }catch(error2){
-                throw new Error("watchJS error: browser not supported :/")
+
+            Object.observe(obj[propName], function(data){
+                setter(data); //TODO: adapt our callback data to match Object.observe data spec
+            }); 
+
+        } catch(e) {
+
+            try {
+                    Object.defineProperty(obj, propName, {
+                            get: getter,
+                            set: setter,
+                            enumerable: true,
+                            configurable: true
+                    });
+            } catch(e2) {
+                try{
+                    Object.prototype.__defineGetter__.call(obj, propName, getter);
+                    Object.prototype.__defineSetter__.call(obj, propName, setter);
+                } catch(e3) {
+                    throw new Error("watchJS error: browser not supported :/")
+                }
             }
+
         }
     };
 
