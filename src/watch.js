@@ -54,13 +54,13 @@
         if(!(typeof a == "string") && !(typeof b == "string") && !isArray(a) && !isArray(b)){
 
             for(var i in a){
-                if(!b[i]){
+                if(b[i] === undefined){
                     aplus.push(i);
                 }
             }
 
             for(var j in b){
-                if(!a[j]){
+                if(a[j] === undefined){
                     bplus.push(j);
                 }
             }
@@ -363,11 +363,7 @@
 
                 if(difference.added.length || difference.removed.length){
                     if(difference.added.length){
-                        for (var j in subj.obj.watchers) {
-                            for(var k in subj.obj.watchers[j]){
-                                watchMany(subj.obj, difference.added, subj.watcher, subj.level - 1, true);
-                            }
-                        }
+                        watchMany(subj.obj, difference.added, subj.watcher, subj.level - 1, true);
                     }
 
                     subj.watcher.call(subj.obj, "root", "differentattr", difference, subj.actual);
