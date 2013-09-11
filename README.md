@@ -31,6 +31,11 @@ var unwatch = WatchJS.unwatch;
 var callWatchers = WatchJS.callWatchers;
 ```
 
+#### Installing via Bower
+```
+bower install watch
+```
+
 # Examples
 
 ## Observe the changes of one object attribute

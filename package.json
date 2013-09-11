@@ -1,6 +1,6 @@
 {
   "name": "watchjs",
-  "version": "0.0.0",
+  "version": "1.3.0",
   "description": "A utility for watching object changes.",
   "main": "src/watch.js",
   "scripts": {
@@ -17,6 +17,5 @@
   ],
   "author": "melanke",
   "license": "MIT",
-  "readmeFilename": "README.md",
-  "gitHead": "05f676438a6f68598341793640549e8f476f8663"
+  "readmeFilename": "README.md"
 }
