@@ -77,7 +77,7 @@ watch(ex2, ["attr2", "attr3"], function(){
 ex2.attr2 = 50;​
 ```
 
-[Try out](http://jsfiddle.net/2zT4C/22/)
+[Try out](http://jsfiddle.net/2zT4C/23/)
 
 ## Observe the changes of all attributes of the object
 
@@ -99,7 +99,7 @@ watch(ex3, function(){
 ex3.attr3.push("new value");​
 ```
 
-[Try out](http://jsfiddle.net/C83pW/25/)
+[Try out](http://jsfiddle.net/C83pW/27/)
 
 ## Remove a Watcher
 
@@ -145,7 +145,7 @@ watch(ex1, "attr1", function(prop, action, newvalue, oldvalue){
 ex1.attr1 = "other value";​
 ```
 
-[Try out](http://jsfiddle.net/XnbXS/20/)
+[Try out](http://jsfiddle.net/XnbXS/21/)
 
 ## Don't worry about the Infinite Loop
 
@@ -229,7 +229,7 @@ ex6.attr3 = null; //no watcher will be invoked
 ex6.attr3 = "value"; //no watcher will be invoked​​​
 ```
 
-[Try out](http://jsfiddle.net/NFmUc/6/)
+[Try out](http://jsfiddle.net/NFmUc/7/)
 
 ## Do you want to know when new attributes change too?
 
@@ -277,7 +277,7 @@ watch(ex7, function(){
 callWatchers(ex7, "attr1"); //invoke the watcher​​
 ```
 
-[Try out](http://jsfiddle.net/98MmB/8/)
+[Try out](http://jsfiddle.net/98MmB/10/)
 
 ## Compatible with JQuery
 
