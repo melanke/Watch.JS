@@ -51,17 +51,33 @@
         var aplus = [],
         bplus = [];
 
-        if(!(typeof a == "string") && !(typeof b == "string") && !isArray(a) && !isArray(b)){
+        if(!(typeof a == "string") && !(typeof b == "string")){
 
-            for(var i in a){
-                if(b[i] === undefined){
-                    aplus.push(i);
+            if (isArray(a)) {
+                for (var i=0; i<a.length; i++) {
+                    if (b[i] === undefined) aplus.push(i);
+                }
+            } else {
+                for(var i in a){
+                    if (a.hasOwnProperty(i)) {
+                        if(b[i] === undefined) {
+                            aplus.push(i);
+                        }
+                    }
                 }
             }
 
-            for(var j in b){
-                if(a[j] === undefined){
-                    bplus.push(j);
+            if (isArray(b)) {
+                for (var j=0; j<b.length; j++) {
+                    if (a[j] === undefined) bplus.push(j);
+                }
+            } else {
+                for(var j in b){
+                    if (b.hasOwnProperty(j)) {
+                        if(a[j] === undefined) {
+                            bplus.push(j);
+                        }
+                    }
                 }
             }
         }
@@ -157,11 +173,13 @@
             }
         } else {
             for (var prop2 in obj) { //for each attribute if obj is an object
-                props.push(prop2); //put in the props
+                if (obj.hasOwnProperty(prop2)) {
+                    props.push(prop2); //put in the props
+                }
             }
         }
 
-        watchMany(obj, props, watcher, level, addNRemove); //watch all itens of the props
+        watchMany(obj, props, watcher, level, addNRemove); //watch all items of the props
 
         if (addNRemove) {
             pushToLengthSubjects(obj, "$$watchlengthsubjectroot", watcher, level);
@@ -176,7 +194,9 @@
         }
 
         for (var prop in props) { //watch each attribute of "props" if is an object
-            watchOne(obj, props[prop], watcher, level, addNRemove);
+            if (props.hasOwnProperty(prop)) {
+                watchOne(obj, props[prop], watcher, level, addNRemove);
+            }
         }
 
     };
@@ -192,15 +212,12 @@
         }
 
         if(obj[prop] != null && (level === undefined || level > 0)){
-            if(level !== undefined){
-                level--;
-            }
-            watchAll(obj[prop], watcher, level); //recursively watch all attributes of this
+            watchAll(obj[prop], watcher, level!==undefined? level-1 : level); //recursively watch all attributes of this
         }
 
-        defineWatcher(obj, prop, watcher);
+        defineWatcher(obj, prop, watcher, level);
 
-        if(addNRemove){
+        if(addNRemove && (level === undefined || level > 0)){
             pushToLengthSubjects(obj, prop, watcher, level);
         }
 
@@ -233,7 +250,9 @@
             }
         } else {
             for (var prop2 in obj) { //for each attribute if obj is an object
-                props.push(prop2); //put in the props
+                if (obj.hasOwnProperty(prop2)) {
+                    props.push(prop2); //put in the props
+                }
             }
         }
 
@@ -244,11 +263,13 @@
     var unwatchMany = function (obj, props, watcher) {
 
         for (var prop2 in props) { //watch each attribute of "props" if is an object
-            unwatchOne(obj, props[prop2], watcher);
+            if (props.hasOwnProperty(prop2)) {
+                unwatchOne(obj, props[prop2], watcher);
+            }
         }
     };
 
-    var defineWatcher = function (obj, prop, watcher) {
+    var defineWatcher = function (obj, prop, watcher, level) {
 
         var val = obj[prop];
 
@@ -262,7 +283,7 @@
             obj.watchers[prop] = [];
         }
 
-        for(var i in obj.watchers[prop]){
+        for (var i=0; i<obj.watchers[prop].length; i++) {
             if(obj.watchers[prop][i] === watcher){
                 return;
             }
@@ -281,14 +302,16 @@
             var oldval = val;
             val = newval;
 
-            if (obj[prop]){
-                watchAll(obj[prop], watcher);
+            if (level !== 0 && obj[prop]){
+                // watch sub properties
+                watchAll(obj[prop], watcher, (level===undefined)?level:level-1);
             }
 
             watchFunctions(obj, prop);
 
             if (!WatchJS.noMore){
-                if (JSON.stringify(oldval) !== JSON.stringify(newval)) {
+                //if (JSON.stringify(oldval) !== JSON.stringify(newval)) {
+                if (oldval !== newval) {
                     callWatchers(obj, prop, "set", newval, oldval);
                     WatchJS.noMore = false;
                 }
@@ -301,14 +324,14 @@
 
     var callWatchers = function (obj, prop, action, newval, oldval) {
         if (prop) {
-            for (var wr in obj.watchers[prop]) {
-                if (isInt(wr)) {
-                    obj.watchers[prop][wr].call(obj, prop, action, newval || obj[prop], oldval);
-                }
+            for (var wr=0; wr<obj.watchers[prop].length; wr++) {
+                obj.watchers[prop][wr].call(obj, prop, action, newval, oldval);
             }
         } else {
             for (var prop in obj) {//call all
-                callWatchers(obj, prop, action, newval, oldval);
+                if (obj.hasOwnProperty(prop)) {
+                    callWatchers(obj, prop, action, newval, oldval);
+                }
             }
         }
     };
@@ -340,7 +363,7 @@
     };
 
     var unwatchOne = function (obj, prop, watcher) {
-        for(var i in obj.watchers[prop]){
+        for (var i=0; i<obj.watchers[prop].length; i++) {
             var w = obj.watchers[prop][i];
 
             if(w == watcher) {
@@ -353,7 +376,7 @@
 
     var loop = function(){
 
-        for(var i in lengthsubjects){
+        for(var i=0; i<lengthsubjects.length; i++) {
 
             var subj = lengthsubjects[i];
 
@@ -377,7 +400,7 @@
             
                 if(difference.added.length || difference.removed.length){
                     if(difference.added.length){
-                        for(var j in subj.obj.watchers[subj.prop]){
+                        for (var j=0; j<subj.obj.watchers[subj.prop].length; j++) {
                             watchMany(subj.obj[subj.prop], difference.added, subj.obj.watchers[subj.prop][j], subj.level - 1, true);
                         }
                     }
@@ -414,7 +437,7 @@
 
     var removeFromLengthSubjects = function(obj, prop, watcher){
 
-        for (var i in lengthsubjects) {
+        for (var i=0; i<lengthsubjects.length; i++) {
             var subj = lengthsubjects[i];
 
             if (subj.obj == obj && subj.prop == prop && subj.watcher == watcher) {
