@@ -193,10 +193,9 @@
             return;
         }
 
-        for (var prop in props) { //watch each attribute of "props" if is an object
-            if (props.hasOwnProperty(prop)) {
-                watchOne(obj, props[prop], watcher, level, addNRemove);
-            }
+        for (var i=0; i<props.length; i++) { //watch each property
+            var prop = props[i];
+            watchOne(obj, prop, watcher, level, addNRemove);
         }
 
     };
@@ -323,7 +322,7 @@
     };
 
     var callWatchers = function (obj, prop, action, newval, oldval) {
-        if (prop) {
+        if (prop !== undefined) {
             for (var wr=0; wr<obj.watchers[prop].length; wr++) {
                 obj.watchers[prop][wr].call(obj, prop, action, newval, oldval);
             }
