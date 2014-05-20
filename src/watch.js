@@ -240,22 +240,28 @@
             return;
         }
 
-        var props = [];
-
-
         if (isArray(obj)) {
+            var props = [];
             for (var prop = 0; prop < obj.length; prop++) { //for each item if obj is an array
                 props.push(prop); //put in the props
             }
+            unwatchMany(obj, props, watcher); //watch all itens of the props
         } else {
-            for (var prop2 in obj) { //for each attribute if obj is an object
-                if (obj.hasOwnProperty(prop2)) {
-                    props.push(prop2); //put in the props
+            var unwatchPropsInObject = function (obj2) {
+                var props = [];
+                for (var prop2 in obj2) { //for each attribute if obj is an object
+                    if (obj2.hasOwnProperty(prop2)) {
+                        if (obj2[prop2] instanceof Object) {
+                            unwatchPropsInObject(obj2[prop2]); //recurs into object props
+                        } else {
+                            props.push(prop2); //put in the props
+                        }
+                    }
                 }
-            }
+                unwatchMany(obj2, props, watcher); //unwatch all of the props
+            };
+            unwatchPropsInObject(obj);
         }
-
-        unwatchMany(obj, props, watcher); //watch all itens of the props
     };
 
 
