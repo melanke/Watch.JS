@@ -146,7 +146,7 @@
     };
 
     var watch = function () {
-
+		
         if (isFunction(arguments[1])) {
             watchAll.apply(this, arguments);
         } else if (isArray(arguments[1])) {
@@ -173,7 +173,7 @@
             }
         } else {
             for (var prop2 in obj) { //for each attribute if obj is an object
-                if (obj.hasOwnProperty(prop2)) {
+                if (Object.prototype.hasOwnProperty.call(obj, prop2)) {
                     props.push(prop2); //put in the props
                 }
             }
@@ -201,7 +201,6 @@
     };
 
     var watchOne = function (obj, prop, watcher, level, addNRemove) {
-
         if ((typeof obj == "string") || (!(obj instanceof Object) && !isArray(obj))) { //accepts only objects and array (not string)
             return;
         }
@@ -209,7 +208,6 @@
         if(isFunction(obj[prop])) { //dont watch if it is a function
             return;
         }
-
         if(obj[prop] != null && (level === undefined || level > 0)){
             watchAll(obj[prop], watcher, level!==undefined? level-1 : level); //recursively watch all attributes of this
         }
