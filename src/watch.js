@@ -109,7 +109,7 @@
 
             Object.observe(obj[propName], function(data){
                 setter(data); //TODO: adapt our callback data to match Object.observe data spec
-            }); 
+            });
 
         } catch(e) {
 
@@ -146,7 +146,7 @@
     };
 
     var watch = function () {
-		
+
         if (isFunction(arguments[1])) {
             watchAll.apply(this, arguments);
         } else if (isArray(arguments[1])) {
@@ -173,6 +173,10 @@
             }
         } else {
             for (var prop2 in obj) { //for each attribute if obj is an object
+				if (prop2 == "$val") {
+					continue;
+				}
+
                 if (Object.prototype.hasOwnProperty.call(obj, prop2)) {
                     props.push(prop2); //put in the props
                 }
@@ -400,7 +404,7 @@
             } else {
 
                 var difference = getObjDiff(subj.obj[subj.prop], subj.actual);
-            
+
                 if(difference.added.length || difference.removed.length){
                     if(difference.added.length){
                         for (var j=0; j<subj.obj.watchers[subj.prop].length; j++) {
@@ -420,7 +424,7 @@
     };
 
     var pushToLengthSubjects = function(obj, prop, watcher, level){
-        
+
         var actual;
 
         if (prop === "$$watchlengthsubjectroot") {
