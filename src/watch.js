@@ -107,10 +107,15 @@
     var defineGetAndSet = function (obj, propName, getter, setter) {
         try {
 
-            Object.observe(obj[propName], function(data){
-                setter(data); //TODO: adapt our callback data to match Object.observe data spec
+            
+            Object.observe(obj, function(changes) {
+                changes.forEach(function(change) {
+                    if (change.name === propName) {
+                        setter(change.object[change.name]);
+                    }
+                });
             });
-
+            
         } catch(e) {
 
             try {
