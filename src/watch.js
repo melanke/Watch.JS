@@ -291,8 +291,10 @@
             defineProp(obj, "watchers", {});
         }
 
+        var newWatcher = false;
         if (!obj.watchers[prop]) {
             obj.watchers[prop] = [];
+            newWatcher = true;
         }
 
         for (var i=0; i<obj.watchers[prop].length; i++) {
@@ -304,33 +306,34 @@
 
         obj.watchers[prop].push(watcher); //add the new watcher in the watchers array
 
+        if (newWatcher) {
+            var getter = function () {
+                return val;
+            };
 
-        var getter = function () {
-            return val;
-        };
 
+            var setter = function (newval) {
+                var oldval = val;
+                val = newval;
 
-        var setter = function (newval) {
-            var oldval = val;
-            val = newval;
-
-            if (level !== 0 && obj[prop]){
-                // watch sub properties
-                watchAll(obj[prop], watcher, (level===undefined)?level:level-1);
-            }
-
-            watchFunctions(obj, prop);
-
-            if (!WatchJS.noMore){
-                //if (JSON.stringify(oldval) !== JSON.stringify(newval)) {
-                if (oldval !== newval) {
-                    callWatchers(obj, prop, "set", newval, oldval);
-                    WatchJS.noMore = false;
+                if (level !== 0 && obj[prop]){
+                    // watch sub properties
+                    watchAll(obj[prop], watcher, (level===undefined)?level:level-1);
                 }
-            }
-        };
 
-        defineGetAndSet(obj, prop, getter, setter);
+                watchFunctions(obj, prop);
+
+                if (!WatchJS.noMore){
+                    //if (JSON.stringify(oldval) !== JSON.stringify(newval)) {
+                    if (oldval !== newval) {
+                        callWatchers(obj, prop, "set", newval, oldval);
+                        WatchJS.noMore = false;
+                    }
+                }
+            };
+
+            defineGetAndSet(obj, prop, getter, setter);
+        }
 
     };
 
