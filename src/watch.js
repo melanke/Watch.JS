@@ -33,7 +33,15 @@
         noMore: false
     },
     lengthsubjects = [];
-
+    
+    var dirtyCheckList = [];
+    var pendingChanges = []; // used coalesce changes from defineProperty and __defineSetter__
+    
+    var supportDefineProperty = false;
+    try {
+        supportDefineProperty = Object.defineProperty && Object.defineProperty({},'x', {});
+    } catch(ex) {  /* not supported */  }
+            
     var isFunction = function (functionToCheck) {
             var getType = {};
             return functionToCheck && getType.toString.call(functionToCheck) == '[object Function]';
@@ -121,16 +129,26 @@
             try {
                     Object.defineProperty(obj, propName, {
                             get: getter,
-                            set: setter,
+                            set: function(value) {
+                                setter.call(this,value,true); // coalesce changes
+                            },
                             enumerable: true,
                             configurable: true
                     });
             } catch(e2) {
                 try{
                     Object.prototype.__defineGetter__.call(obj, propName, getter);
-                    Object.prototype.__defineSetter__.call(obj, propName, setter);
+                    Object.prototype.__defineSetter__.call(obj, propName, function(value) {
+                        setter.call(this,value,true); // coalesce changes
+                    });
                 } catch(e3) {
-                    throw new Error("watchJS error: browser not supported :/")
+                    //throw new Error("watchJS error: browser not supported :/")
+                    dirtyCheckList[dirtyCheckList.length] = {
+                        prop:       propName,
+                        object:     obj,
+                        orig:       clone(obj[propName]),
+                        callback:   setter
+                    }
                 }
             }
 
@@ -178,9 +196,9 @@
             }
         } else {
             for (var prop2 in obj) { //for each attribute if obj is an object
-				if (prop2 == "$val") {
-					continue;
-				}
+                if (prop2 == "$val" || (!supportDefineProperty && prop2 === 'watchers')) {
+                    continue;
+                }
 
                 if (Object.prototype.hasOwnProperty.call(obj, prop2)) {
                     props.push(prop2); //put in the props
@@ -283,8 +301,6 @@
 
     var defineWatcher = function (obj, prop, watcher, level) {
 
-        var val = obj[prop];
-
         watchFunctions(obj, prop);
 
         if (!obj.watchers) {
@@ -307,12 +323,12 @@
         obj.watchers[prop].push(watcher); //add the new watcher in the watchers array
 
         if (newWatcher) {
+            var val = obj[prop];            
             var getter = function () {
                 return val;
             };
 
-
-            var setter = function (newval) {
+            var setter = function (newval, delayWatcher) {
                 var oldval = val;
                 val = newval;
 
@@ -326,7 +342,19 @@
                 if (!WatchJS.noMore){
                     //if (JSON.stringify(oldval) !== JSON.stringify(newval)) {
                     if (oldval !== newval) {
-                        callWatchers(obj, prop, "set", newval, oldval);
+                        if (!delayWatcher) {
+                            callWatchers(obj, prop, "set", newval, oldval);
+                        }
+                        else {
+                            pendingChanges[pendingChanges.length] = {
+                                obj:obj,
+                                prop: prop,
+                                mode: "set",
+                                newval: newval,
+                                oldval: oldval
+                            }
+                            
+                        }
                         WatchJS.noMore = false;
                     }
                 }
@@ -391,6 +419,19 @@
 
     var loop = function(){
 
+        
+        // apply pending changes
+        var change = null;
+        for(var i in pendingChanges) {
+            change = pendingChanges[i];
+            callWatchers(change.obj, change.prop, change.mode, change.newval, change.oldval);
+        }
+        if (change) {
+            pendingChanges = [];
+            change = null;
+        }
+            
+        // check for new or deleted props
         for(var i=0; i<lengthsubjects.length; i++) {
 
             var subj = lengthsubjects[i];
@@ -427,6 +468,17 @@
 
             }
 
+        }
+        
+        // start dirty check
+        var n, value;
+        for(var i in dirtyCheckList) {
+            n = dirtyCheckList[i];
+            value = n.object[n.prop];
+            if (n.orig !== value) {
+                n.orig = clone(value);
+                n.callback(value);
+            }
         }
 
     };
