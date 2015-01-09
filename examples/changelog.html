@@ -1,0 +1,23 @@
+Changelog
+-------------------------
+[2014-12-23]
+* WatchJS.noMore does not work as expected with Object.observe. This can be replace with suspend() and resume() methods. E.g. WatchJS.suspend(obj,"attr1")
+
+[2014-12-16]
+* Watch function now returns correct values for arrays
+* Added WatchJS.onChange() :
+    // Track changes made to an array, object or an object's property 
+    // and invoke callback with a single change object containing type, value, oldvalue and array splices
+    // Syntax: 
+    //       WatchJS.onChange(obj, callback, recursive, addNRemove)
+    //       WatchJS.onChange(obj, prop, callback, recursive, addNRemove)
+
+[2014-12-09]
+* Added dirty-checking fallback for legacy browsers - still needs more testing but it's working in IE8
+* Added WatchJS.useDirtyCheck - when set to true use only dirty checking to track changes
+* Coalesce changes when using defineProperty or __defineSetter__
+
+[2014-12-08]
+* Prevent watchers from being called multiple times. (checked into github) -- issue #80
+
+

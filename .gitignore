@@ -2,3 +2,11 @@
 *.bak
 .dropbox
 
+/Watch.JS/nbproject/private/
+/nbproject/private/
+/nbproject/project.properties
+/nbproject/project.xml
+/examples/diff-obj.js
+/examples/ball.html
+/examples/bind.html
+/examples/bind.js

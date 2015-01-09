@@ -1,0 +1,126 @@
+<!DOCType html>
+<html>
+<head>    
+<title>Particles</title>
+<style type="text/css">
+    .star {
+        position:absolute;
+        width:10px;
+        height:10px;
+        background-color:red;
+        border-radius: 5px;
+    }
+</style>
+<script type="text/javascript" src="js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="../src/watch.js"></script>
+<script type="text/javascript">
+
+if (!window.console) {
+    window.console = {
+        log: function(t) { /* not supported */ }
+    }
+}
+
+var o = {
+    particles: [],
+    width: 0,
+    randomize: false,
+    animate: true
+};
+
+// force dirty checks
+// WatchJS.useDirtyCheck = true;
+
+$(function() {
+           
+    function createParticle () {
+        var color = 'rgb('+parseInt(Math.random()*200)+','+parseInt(Math.random()*200)+','+parseInt(Math.random()*200)+')'
+        var particle = {
+            left:0,
+            top:50
+        };
+        var div = $('<div class="star" style="left:'+particle.left+'px;top:'+particle.top+'px;background-color:'+color+'"></div>');
+        div.appendTo('body');
+        o.particles[o.particles.length] = particle;
+        WatchJS.onChange(particle,function(change) {
+            var star = change.value;
+            var pos = {
+                left:star.left+'px',
+                top: star.top+'px'
+            };
+            if (o.animate) {
+                div.animate(pos);
+            }
+            else {
+                div.css(pos);
+            }
+        })        
+    }
+
+    function moveParticleX(){
+        for(i=0;i<100;i++) {
+            o.particles[i].left=300+(Math.random()*o.width);
+        }
+    }
+        
+    function moveParticleXY() {
+        for(var i=0;i< o.particles.length;i++) {
+            o.particles[i].left = 300+(Math.random()*o.width);
+            o.particles[i].top = 50 + (Math.random()*600)
+        }
+    }
+    
+    function moveParticles() {
+        if (o.randomize) {
+            moveParticleXY();
+        }
+        else {
+            moveParticleX();
+        }
+    }
+    
+    WatchJS.onChange(o,"width",function(change) {
+        $('#txtwidth').text(change.value);
+    })    
+    
+    o.width = 150;
+    for(var i=0;i<100;i++) {
+        createParticle();
+    }
+        
+    setInterval(moveParticles, 800);
+                
+    $('#width').change(function() {
+        o.width = parseInt($(this).val());
+        moveParticles();
+    })
+
+    $('#chkrandom').change(function() {
+        o.randomize = $(this).prop('checked');
+        moveParticles();
+    })
+    
+    $('#chkanimate').change(function() {
+        o.animate = $(this).prop('checked');
+        moveParticles();
+    })
+    
+    moveParticleXY();        
+
+})
+
+</script>
+
+</head>
+<body>
+<h2>Particles Example</h2>
+   
+<div>
+    <label>Adjust Width: <span id="txtwidth"></span></label><br >
+    <input type="range" min="100" max="800" id="width" value="150" /><br >
+    <label><input type="checkbox" id="chkrandom"> Randomize</label><br>
+    <label><input type="checkbox" id="chkanimate" checked="checked"> Animate</label><br>    
+</div>
+
+ </body>
+</html>
