@@ -1,0 +1,71 @@
+<!DOCType html>
+<html>
+<head>    
+    <title>Basic WatchJS</title>
+    <script src="../src/watch.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+
+if (!window.console) {
+    window.console.log = function(t) { }
+}
+
+var obj = {
+    test: false, 
+    color: '#eee',
+    box: {
+        width: 100, 
+        height:100,
+        top: 0,
+        left:0,
+        color:'green',
+        meta :{
+            name: 'Box1'
+        }
+    }
+};
+
+
+
+
+WatchJS.watch(obj, "test", function(prop, action, newvalue, oldvalue) {
+console.log("first:"+newvalue);
+});
+
+WatchJS.watch(obj, "test", function(prop, action, newvalue, oldvalue) {
+console.log("second:"+newvalue);
+});
+
+WatchJS.watch(obj, "test", function(prop, action, newvalue, oldvalue) {
+console.log("third:"+newvalue);
+});
+
+WatchJS.watch(obj, "test", function(prop, action, newvalue, oldvalue) {
+console.log("fourth:"+newvalue);
+});
+
+obj.test = true;
+obj.test = "hello";
+    
+//defining our object however we like
+var ex1 = {
+    attr1: "initial value of attr1",
+    attr2: "initial value of attr2"
+};
+
+//defining a 'watcher' for an attribute
+watch(ex1, "attr1", function(prop, action, newvalue, oldvalue){
+    alert("attr1 changed!"+action);
+});
+
+//when changing the attribute its watcher will be invoked
+ex1.attr1 = "other value";
+callWatchers(ex1, "attr1"); //invoke the watcher​​
+
+
+</script>
+<h2>Basic WatchJS Example</h2>
+<p>View Page source code</p>
+</body>
+</html>
