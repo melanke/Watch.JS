@@ -686,12 +686,14 @@
         
         // start dirty check
         var n, value;
-        for(var i in dirtyChecklist) {
-            n = dirtyChecklist[i];
-            value = n.object[n.prop];
-            if (!compareValues(n.orig ,value)) {
-                n.orig = clone(value);
-                n.callback(value);
+        if (dirtyChecklist.length > 0) {
+            for (var i = 0; i < dirtyChecklist.length; i++) {
+                n = dirtyChecklist[i];
+                value = n.object[n.prop];
+                if (!compareValues(n.orig, value)) {
+                    n.orig = clone(value);
+                    n.callback(value);
+                }
             }
         }
 
