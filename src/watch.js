@@ -576,15 +576,17 @@
     };
 
     var unwatchOne = function (obj, prop, watcher) {
-        if (watcher===undefined && obj.watchers[prop]) {
-            delete obj.watchers[prop]; // remove all property watchers
-        }
-        else {
-            for (var i=0; i<obj.watchers[prop].length; i++) {
-                var w = obj.watchers[prop][i];
-
-                if(w == watcher) {
-                    obj.watchers[prop].splice(i, 1);
+        if (obj.watchers[prop]) {
+            if (watcher===undefined) {
+                delete obj.watchers[prop]; // remove all property watchers
+            }
+            else {
+                for (var i=0; i<obj.watchers[prop].length; i++) {
+                    var w = obj.watchers[prop][i];
+    
+                    if (w == watcher) {
+                        obj.watchers[prop].splice(i, 1);
+                    }
                 }
             }
         }
