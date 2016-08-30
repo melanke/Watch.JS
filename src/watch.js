@@ -576,19 +576,24 @@
     };
 
     var unwatchOne = function (obj, prop, watcher) {
-        if (obj.watchers[prop]) {
-            if (watcher===undefined) {
-                delete obj.watchers[prop]; // remove all property watchers
-            }
-            else {
-                for (var i=0; i<obj.watchers[prop].length; i++) {
-                    var w = obj.watchers[prop][i];
-    
-                    if (w == watcher) {
-                        obj.watchers[prop].splice(i, 1);
+        if (prop) {
+            if (obj.watchers[prop]) {
+                if (watcher===undefined) {
+                    delete obj.watchers[prop]; // remove all property watchers
+                }
+                else {
+                    for (var i=0; i<obj.watchers[prop].length; i++) {
+                        var w = obj.watchers[prop][i];
+                        if (w == watcher) {
+                            obj.watchers[prop].splice(i, 1);
+                        }
                     }
                 }
             }
+        }
+        else
+        {
+            delete obj.watchers;
         }
         removeFromLengthSubjects(obj, prop, watcher);
         removeFromDirtyChecklist(obj, prop);
@@ -744,8 +749,12 @@
         for (var i=0; i<lengthsubjects.length; i++) {
             var subj = lengthsubjects[i];
 
-            if (subj.obj == obj && subj.prop == prop && subj.watcher == watcher) {
-                lengthsubjects.splice(i, 1);
+            if (subj.obj == obj) {
+                if (!prop || subj.prop == prop) {
+                    if (!watcher || subj.watcher == watcher) {
+                        lengthsubjects.splice(i, 1);
+                    }
+                }
             }
         }
 
@@ -758,9 +767,9 @@
             var watchers = n.object.watchers;
             notInUse = (
                 n.object == obj 
-                && n.prop == prop 
+                && (!prop || n.prop == prop)
                 && watchers
-                && ( !watchers[prop] || watchers[prop].length == 0 )
+                && (!prop || !watchers[prop] || watchers[prop].length == 0 )
             );
             if (notInUse)  {
                 dirtyChecklist.splice(i, 1);
