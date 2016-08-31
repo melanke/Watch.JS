@@ -745,14 +745,18 @@
     };
 
     var removeFromLengthSubjects = function(obj, prop, watcher){
-
         for (var i=0; i<lengthsubjects.length; i++) {
             var subj = lengthsubjects[i];
 
             if (subj.obj == obj) {
                 if (!prop || subj.prop == prop) {
                     if (!watcher || subj.watcher == watcher) {
-                        lengthsubjects.splice(i, 1);
+                        // if we splice off one item at position i
+                        // we need to decrement i as the array is one item shorter
+                        // so when we increment i in the loop statement we
+                        // will land at the correct index.
+                        // if it's not decremented, you won't delete all length subjects
+                        lengthsubjects.splice(i--, 1);
                     }
                 }
             }
@@ -772,7 +776,8 @@
                 && (!prop || !watchers[prop] || watchers[prop].length == 0 )
             );
             if (notInUse)  {
-                dirtyChecklist.splice(i, 1);
+                // we use the same syntax as in removeFromLengthSubjects
+                dirtyChecklist.splice(i--, 1);
             }
         }
 
