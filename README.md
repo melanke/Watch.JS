@@ -1,4 +1,4 @@
-# Watch.js 1.3.0 [Download](https://raw.github.com/melanke/Watch.JS/master/src/watch.js)
+# Watch.js 1.3.1 [Download](https://raw.github.com/melanke/Watch.JS/master/src/watch.js)
 
 ## About
 
@@ -23,7 +23,7 @@ require("watch", function(WatchJS){
 ```
 
 #### Node.JS Require
-npm install watchjs
+npm install melanke-watchjs
 ```javascript
 var WatchJS = require("watchjs")
 var watch = WatchJS.watch;
