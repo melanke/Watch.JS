@@ -9,6 +9,8 @@
  *
  * FORK:
  * https://github.com/melanke/Watch.JS
+ *
+ * LICENSE: MIT
  */
 
 "use strict";
@@ -74,7 +76,7 @@
             } else {
                 for(var i in a){
                     if (a.hasOwnProperty(i)) {
-                        if(b[i] === undefined) {
+                        if(b && b[i] === undefined) {
                             aplus.push(i);
                         }
                     }
@@ -88,7 +90,7 @@
             } else {
                 for(var j in b){
                     if (b.hasOwnProperty(j)) {
-                        if(a[j] === undefined) {
+                        if(a && a[j] === undefined) {
                             bplus.push(j);
                         }
                     }
