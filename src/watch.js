@@ -9,6 +9,8 @@
  *
  * FORK:
  * https://github.com/melanke/Watch.JS
+ *
+ * LICENSE: MIT
  */
 
 "use strict";
