@@ -69,7 +69,7 @@
 
         if(!(typeof a == "string") && !(typeof b == "string")){
 
-            if (isArray(a)) {
+            if (isArray(a) && b) {
                 for (var i=0; i<a.length; i++) {
                     if (b[i] === undefined) aplus.push(i);
                 }
@@ -83,7 +83,7 @@
                 }
             }
 
-            if (isArray(b)) {
+            if (isArray(b) && a) {
                 for (var j=0; j<b.length; j++) {
                     if (a[j] === undefined) bplus.push(j);
                 }
