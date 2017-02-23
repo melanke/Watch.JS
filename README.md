@@ -25,7 +25,7 @@ require("watch", function(WatchJS){
 #### Node.JS Require
 npm install melanke-watchjs
 ```javascript
-var WatchJS = require("watchjs")
+var WatchJS = require("melanke-watchjs")
 var watch = WatchJS.watch;
 var unwatch = WatchJS.unwatch;
 var callWatchers = WatchJS.callWatchers;
