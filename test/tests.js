@@ -71,6 +71,7 @@ QUnit.test("Observe the changes of all properties of the object", function( asse
     assert.expect(3);
     var done1 = assert.async();
     var obj = {
+        dummy: undefined,
         attr1: 1,
         attr2: 2,
         attr3: 3
@@ -285,6 +286,7 @@ QUnit.test("Observe new object properties", function( assert ) {
     assert.expect(4);
     var done1 = assert.async();
     var obj = {
+        dummy: undefined,
         attr1: 1,
         attr2: 2,
         attr3: 3
@@ -294,6 +296,7 @@ QUnit.test("Observe new object properties", function( assert ) {
     WatchJS.watch(obj, function(prop, action, newvalue, oldvalue){
         
         var oldObj = {
+            dummy: undefined,
             attr1: 1,
             attr2: 2,
             attr3: 3
