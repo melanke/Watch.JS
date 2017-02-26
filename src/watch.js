@@ -122,38 +122,28 @@
 
     var defineGetAndSet = function (obj, propName, getter, setter) {
         try {
-            Object.observe(obj, function(changes) {
-                changes.forEach(function(change) {
-                    if (change.name === propName) {
-                        setter(change.object[change.name]);
-                    }
+            Object.defineProperty(obj, propName, {
+                get: getter,
+                set: function(value) {
+                    setter.call(this,value,true); // coalesce changes
+                },
+                enumerable: true,
+                configurable: true
+            });
+        }
+        catch(e1) {
+            try{
+                Object.prototype.__defineGetter__.call(obj, propName, getter);
+                Object.prototype.__defineSetter__.call(obj, propName, function(value) {
+                    setter.call(this,value,true); // coalesce changes
                 });
-            });            
-        } 
-        catch(e) {
-            try {
-                Object.defineProperty(obj, propName, {
-                    get: getter,
-                    set: function(value) {        
-                        setter.call(this,value,true); // coalesce changes
-                    },
-                    enumerable: true,
-                    configurable: true
-                });
-            } 
+            }
             catch(e2) {
-                try{
-                    Object.prototype.__defineGetter__.call(obj, propName, getter);
-                    Object.prototype.__defineSetter__.call(obj, propName, function(value) {
-                        setter.call(this,value,true); // coalesce changes
-                    });
-                } 
-                catch(e3) {
-                    observeDirtyChanges(obj,propName,setter);
-                    //throw new Error("watchJS error: browser not supported :/")
-                }
+                observeDirtyChanges(obj,propName,setter);
+                //throw new Error("watchJS error: browser not supported :/")
             }
         }
+
     };
 
     var defineProp = function (obj, propName, value) {
