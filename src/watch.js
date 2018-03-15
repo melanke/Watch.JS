@@ -76,7 +76,7 @@
             } else {
                 for(var i in a){
                     if (a.hasOwnProperty(i)) {
-                        if(b && b[i] === undefined) {
+                        if(b && !b.hasOwnProperty(i)) {
                             aplus.push(i);
                         }
                     }
@@ -90,7 +90,7 @@
             } else {
                 for(var j in b){
                     if (b.hasOwnProperty(j)) {
-                        if(a && a[j] === undefined) {
+                        if(a && !a.hasOwnProperty(j)) {
                             bplus.push(j);
                         }
                     }
