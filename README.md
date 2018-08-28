@@ -24,7 +24,7 @@ npm install melanke-watchjs
 
 #### Import as ECMA2015 module
 
-```
+```javascript
 import WatchJS from 'melanke-watchjs';
 
 var watch = WatchJS.watch;
