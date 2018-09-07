@@ -34,7 +34,8 @@
 
     var WatchJS = {
         noMore: false,        // use WatchJS.suspend(obj) instead
-        useDirtyCheck: false // use only dirty checking to track changes.
+        useDirtyCheck: false, // use only dirty checking to track changes.
+        preserveExistingSetters: false
     },
     lengthsubjects = [];
     
@@ -120,12 +121,25 @@
 
     }
 
+    var getExistingSetter = function (obj, propName) {
+        if (WatchJS.preserveExistingSetters) {
+            var existing = Object.getOwnPropertyDescriptor(obj, propName);
+            return existing.set;
+        }
+
+        return undefined;
+    }
+
     var defineGetAndSet = function (obj, propName, getter, setter) {
         try {
+            var existingSetter = getExistingSetter(obj, propName);
             Object.defineProperty(obj, propName, {
                 get: getter,
                 set: function(value) {
-                    setter.call(this,value,true); // coalesce changes
+                    setter.call(this, value, true); // coalesce changes
+                    if (existingSetter) {
+                        existingSetter(value);
+                    }
                 },
                 enumerable: true,
                 configurable: true
