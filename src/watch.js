@@ -486,6 +486,10 @@
 
                 if (!WatchJS.noMore){ // this does not work with Object.observe
                     //if (JSON.stringify(oldval) !== JSON.stringify(newval)) {
+                    if (obj[prop] instanceof Date) {
+                        oldval = oldval.valueOf();
+                        newval = newval.valueOf();
+                    }	
                     if (oldval !== newval) {
                         if (!delayWatcher) {
                             callWatchers(obj, prop, "set", newval, oldval);
