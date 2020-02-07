@@ -486,7 +486,7 @@
 
                 if (!WatchJS.noMore){ // this does not work with Object.observe
                     //if (JSON.stringify(oldval) !== JSON.stringify(newval)) {
-                    if (obj[prop] instanceof Date) {
+                    if (obj[prop] instanceof Date && oldval && newval) {
                         oldval = oldval.valueOf();
                         newval = newval.valueOf();
                     }	
