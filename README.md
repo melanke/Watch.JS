@@ -1,5 +1,7 @@
 # Watch.js 1.4.2 [Download](https://raw.github.com/melanke/Watch.JS/master/src/watch.js)
 
+## ⚠ This project is no longer maintained, for more active development, check [on-change](https://github.com/sindresorhus/on-change)
+
 ## About
 
 Watch.JS is a small library with a lot of possibilities. You may know that the "Observer" design pattern involves executing some function when an observed object changes. Other libraries exist that do this, but with Watch.JS you will not have to change the way you develop. Take a look at the examples to see how simple it is to add Watch.JS to your code.
